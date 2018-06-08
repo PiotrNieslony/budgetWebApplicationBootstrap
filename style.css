@@ -229,6 +229,15 @@ svg{
   margin-right: auto;
 }
 
+.table thead {
+  background-color: #398182;
+  color:white;
+}
+
+.table {
+  border-bottom: 4px solid #398182; 
+}
+
 /*** ADAPTIV STYLE ***/
 @media only screen and (max-width: 992px) {
   #summary-message {
