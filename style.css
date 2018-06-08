@@ -230,6 +230,13 @@ svg{
 }
 
 /*** ADAPTIV STYLE ***/
+@media only screen and (max-width: 992px) {
+  #summary-message {
+    margin-top:0px;
+    text-align: center;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .form-login{
     width: 100%;
@@ -242,10 +249,5 @@ svg{
 
   .content{
     margin:5px;
-  }
-
-  #summary-message {
-    margin-top:0;
-    text-align: center;
   }
 }
