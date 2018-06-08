@@ -222,6 +222,7 @@ svg{
 /*** BALANCE PAGE ***/
 #summary-message {
   margin-top:208px;
+  font-size: 20px;
 }
 
 .chart > div > div{
@@ -235,7 +236,7 @@ svg{
 }
 
 .table {
-  border-bottom: 4px solid #398182; 
+  border-bottom: 4px solid #398182;
 }
 
 /*** ADAPTIV STYLE ***/
