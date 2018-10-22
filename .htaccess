@@ -5,9 +5,9 @@ Deny from all
 </FilesMatch>
 
 RewriteEngine on
-RewriteRule dodaj-wydatek add-expense.html
-RewriteRule dodaj-przychod add-income.html
-RewriteRule przegladaj-bilans budget.html
-RewriteRule rejestracja registration.html
-RewriteRule zaloguj login.html
-RewriteRule ustawienia setings.html
+RewriteRule dodaj-wydatek add-expense.php
+RewriteRule dodaj-przychod add-income.php
+RewriteRule przegladaj-bilans budget.php
+RewriteRule rejestracja registration.php
+RewriteRule zaloguj login.php
+RewriteRule ustawienia setings.php
