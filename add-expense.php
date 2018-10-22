@@ -1,3 +1,7 @@
+<?php
+session_start();
+if(!isset($_SESSION['loggedUser'])) header('Location:zaloguj');
+?>
 <!DOCTYPE HTML>
 <html lang="pl">
 <head>
@@ -20,20 +24,7 @@
 				<h1 id="logo"><i>$</i> Your<span>Budget</span></h1>
 			</header>
 		</div>
-			<div class="sidebar">
-					<span class="switcher"><i class="icon-left-open"></i></span>
-					<nav>
-					<div class="main-menu">
-						<ul>
-							<li><a href="dodaj-przychod">Dodaj przychód</a></li>
-							<li><a href="dodaj-wydatek">Dodaj wydatek</a></li>
-							<li><a href="przegladaj-bilans">Przeglądaj bilans</a></li>
-							<li><a href="#">Ustawienia</a></li>
-							<li><a href="zaloguj">Wyloguj</a></li>
-						</ul>
-					</div>
-				</nav>
-		</div>
+                <?= require_once 'sidebar.php' ?>
 				<div class="content budget add-expense">
 					<main>
 					<header>
