@@ -1,9 +1,29 @@
 <?php
     session_start();
     if(!isset($_SESSION['loggedUser'])) header('Location:zaloguj');
+    require_once 'dbconnect.php';
+    $queryIncoms = $db->query("SELECT  icatu.name, SUM(incomes.amount) AS amount
+                    FROM incomes
+                    INNER JOIN
+                    incomes_category_assigned_to_users icatu
+                    ON incomes.income_category_assigned_to_user_id = icatu.id
+                    WHERE incomes.user_id = 37
+                    GROUP BY incomes.income_category_assigned_to_user_id;");
+    $queryExpens = $db->query("SELECT  ecatu.name, SUM(expenses.amount) AS amount
+                    FROM expenses
+                    INNER JOIN
+                    expenses_category_assigned_to_users ecatu
+                    ON expenses.expense_category_assigned_to_user_id = ecatu.id
+                    WHERE expenses.user_id = 37
+                    GROUP BY expenses.expense_category_assigned_to_user_id;");
+    $incomes = $queryIncoms->fetchAll();
+    $expens = $queryExpens->fetchAll();
+
 ?>
 <!DOCTYPE HTML>
 <html lang="pl">
+
+
 <head>
 	<meta charset="utf-8" />
 	<title>Budget - Rejestracja</title>
@@ -163,6 +183,16 @@
 		<script src="bootstrap/bootstrap.min.js"></script>
 	<script src="jquery/jquery-ui.min.js"	></script>
 	<script  src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        //incomes data
+        var incomesArray = <?php echo json_encode($incomes,JSON_NUMERIC_CHECK )?>;
+        console.log(incomesArray);
+        //expenses data
+        var expensesArray = <?php echo json_encode($expens,JSON_NUMERIC_CHECK )?>;
+
+    </script>
+	<script src="balance.js"	></script>
 	<script src="main.js"	></script>
 </body>
 </html>
+?>
