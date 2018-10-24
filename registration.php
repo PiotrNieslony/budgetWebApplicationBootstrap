@@ -90,6 +90,31 @@ if(isset($_POST['inputLogin'])){
         $query->bindValue(':email', $email, PDO::PARAM_STR);
         $query->execute();
         $_SESSION['typedLogin'] = $login;
+
+        $addDefalutExpensesCategory = "INSERT INTO expenses_category_assigned_to_users(user_id, name)
+                                SELECT users.id, ex.name
+                                FROM users
+                                INNER JOIN
+                                expenses_category_default ex
+                                where users.username = '$login';";
+
+        $addDefalutIncomeCategory = "INSERT INTO incomes_category_assigned_to_users(user_id, name)
+                                SELECT users.id, inco.name
+                                FROM users
+                                INNER JOIN
+                                incomes_category_default inco
+                                where users.username = '$login';";
+
+        $addPaymentMethods = "INSERT INTO payment_methods_assigned_to_users(user_id, name)
+                                SELECT users.id, pd.name
+                                FROM users
+                                INNER JOIN
+                                payment_methods_default pd
+                                where users.username = '$login';";
+
+        $db->query($addDefalutExpensesCategory);
+        $db->query($addDefalutIncomeCategory);
+        $db->query($addPaymentMethods);
         header('Location: registration-confirm.php');
         exit();
     }
