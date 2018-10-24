@@ -12,8 +12,7 @@ function generateTable(incomesArray){
     var insomesHTML = "";
     var incomesArrayLength = incomesArray.length -1;
     var sumOfIncomes = 0;
-    for(var i = 0; i <= incomesArrayLength; i++) {
-        console.log(incomesArray[i][0]);
+    for(var i = 1; i <= incomesArrayLength; i++) {
         var tablePart = "<tr>"+
             "<td>" + i + "</td>"+
             "<td>" + incomesArray[i][0] + "</td>"+
@@ -59,13 +58,9 @@ google.charts.setOnLoadCallback(pieCharts);
 
 // Draw the chart and set the chart values
 function pieCharts() {
-    var incomsArrayWithHeader = ['category','amunt'];
-    var expensArrayWithHeader = ['category','amunt'];
-    incomsArrayWithHeader.push(incomesArray);
-    expensArrayWithHeader.push(expensesArray);
-    console.log(incomsArrayWithHeader);
-    var dataIncomes = google.visualization.arrayToDataTable();
-    var dataExpenses = google.visualization.arrayToDataTable(expensArrayWithHeader);
+
+    var dataIncomes = google.visualization.arrayToDataTable(incomesArray);
+    var dataExpenses = google.visualization.arrayToDataTable(expensesArray);
 
     var options = {
         fontName:'Open Sans',
@@ -144,4 +139,18 @@ function drawChart() {
     chart.draw(view, options);
 }
 //////// END COLUM CHART ////////
+
+//Select date scope
+$( "#date-scope" ).change(function () {
+    if($(this).val() == "custom"){
+        $('#dateModal').modal();
+    } else {
+        $("form:first").submit();
+    }
+});
+
+
+$('#dateModalForm').on('submit', function () {
+    $('#dateModalForm').trigger('submit', [ 'variable_name']);
+})
 

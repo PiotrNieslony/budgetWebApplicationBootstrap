@@ -2,22 +2,49 @@
     session_start();
     if(!isset($_SESSION['loggedUser'])) header('Location:zaloguj');
     require_once 'dbconnect.php';
-    $queryIncoms = $db->query("SELECT  icatu.name, SUM(incomes.amount) AS amount
+    $loggedUserId = $_SESSION['loggedUser']['id'];
+    if(isset($_POST['date-scope'])){
+        if($_POST['date-scope'] == "current-month"){
+            $balaceDateFrom = '2018-10-01';// TODO currnet month date
+            $balaceDateTo   = '2018-10-31';
+            $_SESSION['current-month'] = true;
+        } elseif ($_POST['date-scope'] == "previous-month"){
+            $balaceDateFrom = '2018-09-01';
+            $balaceDateTo   = '2018-09-31';
+            $_SESSION['previous-month'] = true;
+        }
+    } elseif (isset($_POST['dateFrom'])){
+        $balaceDateFrom = $_POST['dateFrom'];
+        $balaceDateTo   = $_POST['dateTo'];
+        $_SESSION['custom'] = true;
+    } else {
+        $balaceDateFrom = '2018-10-01';
+        $balaceDateTo   = '2018-10-31';
+    }
+
+    $queryIncoms = $db->query("SELECT  icatu.name AS category, SUM(incomes.amount) AS amount
                     FROM incomes
                     INNER JOIN
                     incomes_category_assigned_to_users icatu
                     ON incomes.income_category_assigned_to_user_id = icatu.id
-                    WHERE incomes.user_id = 37
-                    GROUP BY incomes.income_category_assigned_to_user_id;");
-    $queryExpens = $db->query("SELECT  ecatu.name, SUM(expenses.amount) AS amount
+                    WHERE incomes.user_id = $loggedUserId
+                    AND date_of_income >= '$balaceDateFrom'
+                    AND date_of_income < '$balaceDateTo'
+                    GROUP BY incomes.income_category_assigned_to_user_id
+                    ORDER BY SUM(incomes.amount) DESC;");
+    $queryExpens = $db->query("SELECT  ecatu.name AS category, SUM(expenses.amount) AS amount
                     FROM expenses
                     INNER JOIN
                     expenses_category_assigned_to_users ecatu
                     ON expenses.expense_category_assigned_to_user_id = ecatu.id
-                    WHERE expenses.user_id = 37
-                    GROUP BY expenses.expense_category_assigned_to_user_id;");
+                    WHERE expenses.user_id = $loggedUserId
+                    AND date_of_expense >= '$balaceDateFrom'
+                    AND date_of_expense < '$balaceDateTo'
+                    GROUP BY expenses.expense_category_assigned_to_user_id
+                    ORDER BY SUM(expenses.amount) DESC;");
     $incomes = $queryIncoms->fetchAll();
     $expenses = $queryExpens->fetchAll();
+
 ?>
 <!DOCTYPE HTML>
 <html lang="pl">
@@ -47,18 +74,52 @@
 				<div class="content budget">
 					<main>
 						<header>
-							<h1>Bilans</h1>
+							<h1>Bilans </h1>
+                            <h4>Za okres<?= "od ".$balaceDateFrom." do ".$balaceDateTo ?></h4>
 						</header>
 						<div class="row">
 							<div class="
 								col-lg-3 col-lg-push-9
 								col-md-3 col-md-push-9">
-								<select class="select-date form-control">
-									<option value="current-month">Bieżący miesiąć</option>
-									<option value="previous-month">Poprzedni miesiąć</option>
-									<option value="current-month">Poprzedni miesiąć</option>
-									<option value="custom">Niestandardowy</option>
-								</select>
+                                <form method="post">
+                                    <select id="date-scope" class="select-date form-control" name="date-scope">
+                                        <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąć</option>
+                                        <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąć</option>
+                                        <option value="custom" <?= (isset($_SESSION['custom'])) ? "selected" : ""; unset($_SESSION['custom']);?> >Niestandardowy</option>
+                                    </select>
+                                </form>
+                                <div class="modal fade" id="dateModal" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <form id="dateModalForm" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h4 class="modal-title">Wbierz datę</h4>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                        <div class="form-group">
+                                                            <strong>Data od</strong>
+                                                            <input name="dateFrom" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
+                                                                   pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
+                                                                   title="Wpisz datę w formacie YYYY-MM-DD"/>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <strong>Data do</strong>
+                                                            <input name="dateTo" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
+                                                                   pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
+                                                                   title="Wpisz datę w formacie YYYY-MM-DD"/>
+                                                        </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                    <button type="submit" class="btn btn-primary">OK</button>
+                                                </div>
+                                            </form>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div><!-- /.modal -->
 							</div>
 							<div class="
 								col-lg-3 col-lg-pull-3
@@ -184,11 +245,13 @@
 	<script  src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         //incomes data
-        var incomesArray = [<?php foreach($incomes as $income){echo "[\"$income[0]\", $income[1]],";} ?> ];
+        var incomesArray = [['Category', 'Amount']];
+        incomesArray.push(<?php foreach($incomes as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
 
         console.log(incomesArray);
         //expenses data
-        var expensesArray = [<?php foreach($expenses as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?> ];
+        var expensesArray = [['Category', 'Amount']];
+        expensesArray.push(<?php foreach($expenses as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?>);
 
     </script>
 	<script src="balance.js"	></script>
