@@ -17,8 +17,7 @@
                     WHERE expenses.user_id = 37
                     GROUP BY expenses.expense_category_assigned_to_user_id;");
     $incomes = $queryIncoms->fetchAll();
-    $expens = $queryExpens->fetchAll();
-
+    $expenses = $queryExpens->fetchAll();
 ?>
 <!DOCTYPE HTML>
 <html lang="pl">
@@ -185,14 +184,14 @@
 	<script  src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         //incomes data
-        var incomesArray = <?php echo json_encode($incomes,JSON_NUMERIC_CHECK )?>;
+        var incomesArray = [<?php foreach($incomes as $income){echo "[\"$income[0]\", $income[1]],";} ?> ];
+
         console.log(incomesArray);
         //expenses data
-        var expensesArray = <?php echo json_encode($expens,JSON_NUMERIC_CHECK )?>;
+        var expensesArray = [<?php foreach($expenses as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?> ];
 
     </script>
 	<script src="balance.js"	></script>
 	<script src="main.js"	></script>
 </body>
 </html>
-?>

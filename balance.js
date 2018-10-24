@@ -59,8 +59,13 @@ google.charts.setOnLoadCallback(pieCharts);
 
 // Draw the chart and set the chart values
 function pieCharts() {
-    var dataIncomes = google.visualization.arrayToDataTable(incomesArray);
-    var dataExpenses = google.visualization.arrayToDataTable(expensesArray);
+    var incomsArrayWithHeader = ['category','amunt'];
+    var expensArrayWithHeader = ['category','amunt'];
+    incomsArrayWithHeader.push(incomesArray);
+    expensArrayWithHeader.push(expensesArray);
+    console.log(incomsArrayWithHeader);
+    var dataIncomes = google.visualization.arrayToDataTable();
+    var dataExpenses = google.visualization.arrayToDataTable(expensArrayWithHeader);
 
     var options = {
         fontName:'Open Sans',
@@ -140,23 +145,3 @@ function drawChart() {
 }
 //////// END COLUM CHART ////////
 
-//////// ADD EXPENSE ////////
-$(function() {
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1;
-    var yyyy = today.getFullYear();
-    if(mm < 10) mm = "0" + mm;
-    if(dd < 10) dd = "0" + dd;
-    today = yyyy + '-' + mm + '-' + dd;
-    $(".date").val(today);
-    $( ".date" ).datepicker({
-        dateFormat:"yy-mm-dd",
-        minDate: new Date(2001, 1 - 1, 1),
-        maxDate: "m",
-        monthNames: [ "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" ],
-        dayNames: [ "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela" ],
-        dayNamesMin: [ "Pn", "Wt", "Śr", "Cz", "Pt", "So", "Sn" ],
-    });
-});
-//////// END ADD EXPENSE ////////

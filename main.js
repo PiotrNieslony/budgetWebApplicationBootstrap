@@ -59,6 +59,25 @@ $(window).scroll(function() {
   stickyNav();
 });
 
+//Data picker
+$(function() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1;
+    var yyyy = today.getFullYear();
+    if(mm < 10) mm = "0" + mm;
+    if(dd < 10) dd = "0" + dd;
+    today = yyyy + '-' + mm + '-' + dd;
+    $(".date").val(today);
+    $( ".date" ).datepicker({
+        dateFormat:"yy-mm-dd",
+        minDate: new Date(2001, 1 - 1, 1),
+        maxDate: "m",
+        monthNames: [ "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" ],
+        dayNames: [ "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela" ],
+        dayNamesMin: [ "Pn", "Wt", "Śr", "Cz", "Pt", "So", "Sn" ],
+    });
+});
 
 
 
