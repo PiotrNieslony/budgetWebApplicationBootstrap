@@ -7,7 +7,7 @@ Deny from all
 RewriteEngine on
 RewriteRule dodaj-wydatek add-expense.php
 RewriteRule dodaj-przychod add-income.php
-RewriteRule przegladaj-bilans budget.php
+RewriteRule przegladaj-bilans index.php
 RewriteRule rejestracja registration.php
 RewriteRule zaloguj login.php
 RewriteRule ustawienia setings.php
