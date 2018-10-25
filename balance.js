@@ -141,7 +141,7 @@ function drawChart() {
 //////// END COLUM CHART ////////
 
 //Select date scope
-$( "#date-scope" ).change(function () {
+$( "#date-scope" ).on("change", function () {
     if($(this).val() == "custom"){
         $('#dateModal').modal();
     } else {
