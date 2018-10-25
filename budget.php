@@ -3,14 +3,20 @@
     if(!isset($_SESSION['loggedUser'])) header('Location:zaloguj');
     require_once 'dbconnect.php';
     $loggedUserId = $_SESSION['loggedUser']['id'];
+
+    $firstDayOfMonth = new DateTime('first day of this month');
+    $lastDayOfMonth = new DateTime('first day of this month');
+    $today = new DateTime();
     if(isset($_POST['date-scope'])){
         if($_POST['date-scope'] == "current-month"){
-            $balaceDateFrom = '2018-10-01';// TODO currnet month date
-            $balaceDateTo   = '2018-10-31';
+            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+            $balaceDateTo   = $today->format('Y-m-d');
             $_SESSION['current-month'] = true;
         } elseif ($_POST['date-scope'] == "previous-month"){
-            $balaceDateFrom = '2018-09-01';
-            $balaceDateTo   = '2018-09-31';
+            $firstDayOfMonth->modify('first day of previous month');
+            $lastDayOfMonth->modify('last day of previous month');
+            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+            $balaceDateTo   = $lastDayOfMonth->format('Y-m-d');
             $_SESSION['previous-month'] = true;
         }
     } elseif (isset($_POST['dateFrom'])){
@@ -18,8 +24,8 @@
         $balaceDateTo   = $_POST['dateTo'];
         $_SESSION['custom'] = true;
     } else {
-        $balaceDateFrom = '2018-10-01';
-        $balaceDateTo   = '2018-10-31';
+        $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+        $balaceDateTo   = $today->format('Y-m-d');
     }
 
     $queryIncoms = $db->query("SELECT  icatu.name AS category, SUM(incomes.amount) AS amount
@@ -85,7 +91,8 @@
                                     <select id="date-scope" class="select-date form-control" name="date-scope">
                                         <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąć</option>
                                         <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąć</option>
-                                        <option value="custom" <?= (isset($_SESSION['custom'])) ? "selected" : ""; unset($_SESSION['custom']);?> >Niestandardowy</option>
+                                        <option value="custom">Niestandardowy</option>
+                                        <?= (isset($_SESSION['custom'])) ? "<option selected >$balaceDateFrom - $balaceDateTo</option>" : ""; unset($_SESSION['custom']);?>
                                     </select>
                                 </form>
                                 <div class="modal fade" id="dateModal" tabindex="-1" role="dialog">
@@ -94,7 +101,7 @@
                                             <form id="dateModalForm" method="post">
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title">Wbierz datę</h4>
+                                                    <h4 class="modal-title">Wybierz zakres dat</h4>
                                                 </div>
                                                 <div class="modal-body">
 
@@ -106,7 +113,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <strong>Data do</strong>
-                                                            <input name="dateTo" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
+                                                            <input name="dateTo" class="date date-to form-control" type="text" placeholder="RRRR-MM-DD" required
                                                                    pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
                                                                    title="Wpisz datę w formacie YYYY-MM-DD"/>
                                                         </div>

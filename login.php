@@ -31,9 +31,9 @@
 
 	<link rel="stylesheet" href="bootstrap/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="style.css" type="text/css" />
-	<script src="bootstrap/bootstrap.min.js"></script>
 	<script src="jquery/jquery-3.3.1.min.js"></script>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="bootstrap/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
 	<div class="login-header">

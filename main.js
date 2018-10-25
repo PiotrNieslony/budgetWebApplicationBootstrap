@@ -65,10 +65,20 @@ $(function() {
     var dd = today.getDate();
     var mm = today.getMonth()+1;
     var yyyy = today.getFullYear();
+    var yyyy2 = yyyy;
+    var mm2 = today.getMonth();
+    if(mm2 == 0) {
+        mm2 = 12;
+        --yyyy2;
+    }
+    console.log(mm2);
     if(mm < 10) mm = "0" + mm;
+    if(mm2 < 10) mm2 = "0" + mm2;
     if(dd < 10) dd = "0" + dd;
     today = yyyy + '-' + mm + '-' + dd;
-    $(".date").val(today);
+    var firstDayOfPriviusMonth = yyyy2 + '-' + mm2 + '-01';
+    $(".date").val(firstDayOfPriviusMonth);
+    $(".date-to").val(today);
     $( ".date" ).datepicker({
         dateFormat:"yy-mm-dd",
         minDate: new Date(2001, 1 - 1, 1),
