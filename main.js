@@ -77,7 +77,8 @@ $(function() {
     if(dd < 10) dd = "0" + dd;
     today = yyyy + '-' + mm + '-' + dd;
     var firstDayOfPriviusMonth = yyyy2 + '-' + mm2 + '-01';
-    $(".date").val(firstDayOfPriviusMonth);
+    $(".date").val(today);
+    $(".date-from").val(firstDayOfPriviusMonth);
     $(".date-to").val(today);
     $( ".date" ).datepicker({
         dateFormat:"yy-mm-dd",
