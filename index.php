@@ -35,7 +35,7 @@
                     ON incomes.income_category_assigned_to_user_id = icatu.id
                     WHERE incomes.user_id = $loggedUserId
                     AND date_of_income >= '$balaceDateFrom'
-                    AND date_of_income < '$balaceDateTo'
+                    AND date_of_income <= '$balaceDateTo'
                     GROUP BY incomes.income_category_assigned_to_user_id
                     ORDER BY SUM(incomes.amount) DESC;");
     $queryExpens = $db->query("SELECT  ecatu.name AS category, SUM(expenses.amount) AS amount
@@ -45,7 +45,7 @@
                     ON expenses.expense_category_assigned_to_user_id = ecatu.id
                     WHERE expenses.user_id = $loggedUserId
                     AND date_of_expense >= '$balaceDateFrom'
-                    AND date_of_expense < '$balaceDateTo'
+                    AND date_of_expense <= '$balaceDateTo'
                     GROUP BY expenses.expense_category_assigned_to_user_id
                     ORDER BY SUM(expenses.amount) DESC;");
     $incomes = $queryIncoms->fetchAll();
