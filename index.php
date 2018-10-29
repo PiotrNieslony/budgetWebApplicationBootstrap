@@ -107,7 +107,7 @@
 
                                                         <div class="form-group">
                                                             <strong>Data od</strong>
-                                                            <input name="dateFrom" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
+                                                            <input name="dateFrom" class="date date-from form-control" type="text" placeholder="RRRR-MM-DD" required
                                                                    pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
                                                                    title="Wpisz datę w formacie YYYY-MM-DD"/>
                                                         </div>
