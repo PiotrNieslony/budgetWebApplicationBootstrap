@@ -123,7 +123,7 @@ if(isset($_POST['expenseAmount'])){
 										<div class="form-group">
 											<strong>Kategoria</strong>
                                             <?php
-                                                $categoryQuery = $db->prepare('SELECT id, name FROM expenses_category_assigned_to_users WHERE user_id = :user_id');
+                                                $categoryQuery = $db->prepare('SELECT id, parent_category_id ,name FROM expenses_category_assigned_to_users WHERE user_id = :user_id');
                                                 $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
                                                 $categoryQuery->execute();
                                                 $categorys = $categoryQuery->fetchAll();
