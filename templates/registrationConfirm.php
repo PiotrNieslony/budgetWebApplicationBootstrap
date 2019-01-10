@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <form class="form-login" role="form" method="post">
     <h2>Potwierdzenie</h2>
     <BR>

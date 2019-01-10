@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <header>
   <h1>Dodaj wydatek</h1>
 </header>
