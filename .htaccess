@@ -4,10 +4,9 @@ Order Allow,Deny
 Deny from all
 </FilesMatch>
 
-RewriteEngine on
-RewriteRule dodaj-wydatek add-expense.php
-RewriteRule dodaj-przychod add-income.php
-RewriteRule przegladaj-bilans index.php
-RewriteRule rejestracja registration.php
-RewriteRule zaloguj login.php
-RewriteRule ustawienia setings.php
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.php [L]
+</IfModule>
