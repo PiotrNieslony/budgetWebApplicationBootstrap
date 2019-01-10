@@ -13,7 +13,6 @@ if(!isset($_SESSION['loggedUser'])
 && $action != 'potwierdzenie-rejestracji') $action = 'zaloguj';
 if(isset($_POST['inputLogin']) && isset($_POST['inputPassword'])) $action = 'zaloguj';
 
-echo "akcja: ".$action;
 switch($action):
   case 'showMain';
     include 'templates/mainTemplate.php';
