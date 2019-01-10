@@ -71,7 +71,6 @@ class Budget {
     }
 
     if (!isset($_SESSION['e_login'])){
-        require_once 'dbconnect.php';
         $query = $this->db->prepare('SELECT id FROM users WHERE username = :username');
         $query->bindValue(':username', $login, PDO::PARAM_STR);
         $query->execute();
@@ -90,7 +89,6 @@ class Budget {
         $validation = false;
         $_SESSION['e_email'] = "Podaj poprawny adres email.";
     } else {
-        require_once 'dbconnect.php';
         $query = $this->db->prepare('SELECT id FROM users WHERE email = :email');
         $query->bindValue(':email', $email, PDO::PARAM_STR);
         $query->execute();
@@ -131,7 +129,6 @@ class Budget {
     }
 
     if($validation) {
-        require_once 'dbconnect.php';
         $pass_hash = password_hash($pass1, PASSWORD_DEFAULT);
         $query = $this->db->prepare('INSERT INTO users VALUES (NULL, :username, :password, :email)');
         $query->bindValue(':username', $login, PDO::PARAM_STR);
