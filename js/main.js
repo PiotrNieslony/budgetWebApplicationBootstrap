@@ -42,6 +42,8 @@ $( window ).resize(function() {
     setFixedSidbar();
 });
 
+
+
 var NavY = $('.sidebar').offset().top;
 var stickyNav = function(){
 var ScrollY = $(window).scrollTop();
@@ -58,6 +60,17 @@ stickyNav();
 $(window).scroll(function() {
   stickyNav();
 });
+
+$(function() {
+  $("body").swipe( {
+    swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
+      if(direction === "right" && $('.sidebar').css('left') !== '0px' && ($( document ).width() < 992)) toggleSidebar();
+      else if( direction === "left" && $('.sidebar').css('left') === '0px' && ($( document ).width() < 992)) toggleSidebar();
+    }
+  });
+});
+
+
 
 //Data picker
 $(function() {
