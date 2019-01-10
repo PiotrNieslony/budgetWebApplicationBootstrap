@@ -90,6 +90,14 @@ $(function() {
     });
 });
 
-
-
-
+//category
+$(".mainCategory").click(function(){
+  var handle = $(this);
+  $(".mainCategory.active").next(".subCategory").hide(200, function(){
+    $(".mainCategory.active").removeClass("active");
+  });
+  $(this).next(".subCategory").show(200, function(){
+      console.log("animate ok")
+      handle.addClass("active");
+  });
+})

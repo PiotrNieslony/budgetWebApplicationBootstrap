@@ -1,13 +1,17 @@
+<header>
+  <h1>Bilans </h1>
+                <h4>Za okres<?= "od ".$_SESSION['selected-date-from']." do ".$_SESSION['selected-date-to'] ?></h4>
+</header>
 <div class="row">
   <div class="
     col-lg-3 col-lg-push-9
     col-md-3 col-md-push-9">
                     <form method="post">
                         <select id="date-scope" class="select-date form-control" name="date-scope">
-                            <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąć</option>
-                            <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąć</option>
+                            <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąc</option>
+                            <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąc</option>
                             <option value="custom">Niestandardowy</option>
-                            <?= (isset($_SESSION['custom'])) ? "<option selected >$balaceDateFrom - $balaceDateTo</option>" : ""; unset($_SESSION['custom']);?>
+                            <?= (isset($_SESSION['custom'])) ? "<option selected >".$_SESSION['selected-date-from']." - ".$_SESSION['selected-date-to']."</option>" : ""; unset($_SESSION['custom'], $_SESSION['selected-date-from'], $_SESSION['selected-date-to']);?>
                         </select>
                     </form>
                     <div class="modal fade" id="dateModal" tabindex="-1" role="dialog">
@@ -157,3 +161,15 @@
       </table>
     </div>
   </div>
+
+  <script>
+      //incomes data
+      var incomesArray = [['Category', 'Amount']];
+      incomesArray.push(<?php foreach($balance[0] as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
+
+      console.log(incomesArray);
+      //expenses data
+      var expensesArray = [['Category', 'Amount']];
+      expensesArray.push(<?php foreach($balance[1] as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?>);
+  </script>
+<script src="js/balance.js"	></script>

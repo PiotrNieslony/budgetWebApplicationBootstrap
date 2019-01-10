@@ -13,6 +13,10 @@
 	<link rel="stylesheet" href="fontello/fontello.css" type="text/css" />
 	<link rel="stylesheet" href="jquery/jquery-ui.min.css" type="text/css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="jquery/jquery-3.3.1.min.js"></script>
+	<script src="bootstrap/bootstrap.min.js"></script>
+	<script src="jquery/jquery-ui.min.js"	></script>
+	<script  src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -21,18 +25,21 @@
 				<h1 id="logo"><i>$</i> Your<span>Budget</span></h1>
 			</header>
 		</div>
-        <?= require_once 'sidebar.php' ?>
+        <?php require_once 'sidebar.php' ?>
 				<div class="content budget">
 					<main>
 						<?php
 			          switch($action):
-									case 'showAddIncome' :
+									case 'dodaj-przychod' :
 										include 'templates/addIncome.php';
+										$budget->addIncome();
 										break;
-			            case 'showAddExpense' :
+			            case 'dodaj-wydatek':
 			              include 'templates/addExpense.php';
+										$budget->addExpense();
 			              break;
-			            case 'showBalance':
+			            case 'przegladaj-bilans':
+										$balance = $budget->balance();
 			              include 'templates/balance.php';
 			              break;
 			            case 'showSettigns' :
@@ -44,22 +51,6 @@
 				</main>
 			</div>
 	</div>
-	<script src="jquery/jquery-3.3.1.min.js"></script>
-		<script src="bootstrap/bootstrap.min.js"></script>
-	<script src="jquery/jquery-ui.min.js"	></script>
-	<script  src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        //incomes data
-        var incomesArray = [['Category', 'Amount']];
-        incomesArray.push(<?php foreach($incomes as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
-
-        console.log(incomesArray);
-        //expenses data
-        var expensesArray = [['Category', 'Amount']];
-        expensesArray.push(<?php foreach($expenses as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?>);
-
-    </script>
-	<script src="balance.js"	></script>
-	<script src="main.js"	></script>
+	<script src="js/main.js"	></script>
 </body>
 </html>
