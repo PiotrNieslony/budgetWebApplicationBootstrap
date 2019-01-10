@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <div class="sidebar">
         <span class="switcher"><i class="icon-left-open"></i></span>
         <nav>

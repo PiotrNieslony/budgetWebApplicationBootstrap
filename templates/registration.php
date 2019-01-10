@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <form class="form-login" role="form" method="post">
     <h2>Rejestracja</h2>
     <br>

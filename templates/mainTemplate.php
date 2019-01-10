@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <?php ?>
 <!DOCTYPE HTML>
 <html lang="pl">

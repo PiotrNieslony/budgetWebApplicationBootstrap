@@ -1,3 +1,4 @@
+<?php if(!isset($budget)) die();?>
 <header>
   <h1>Bilans </h1>
                 <h4>Za okres<?= "od ".$_SESSION['selected-date-from']." do ".$_SESSION['selected-date-to'] ?></h4>
