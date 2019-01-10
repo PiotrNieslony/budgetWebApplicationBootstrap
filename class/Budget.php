@@ -82,20 +82,21 @@ class Budget {
 
     //check email
     $email = $_POST['inputEmail'];
+    if($email != ''){
+      $emailB = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-    $emailB = filter_var($email, FILTER_SANITIZE_EMAIL);
-
-    if((filter_var($emailB, FILTER_VALIDATE_EMAIL)) == false || ($emailB != $email)){
-        $validation = false;
-        $_SESSION['e_email'] = "Podaj poprawny adres email.";
-    } else {
-        $query = $this->db->prepare('SELECT id FROM users WHERE email = :email');
-        $query->bindValue(':email', $email, PDO::PARAM_STR);
-        $query->execute();
-        if($query->rowCount()){
-            $validation = false;
-            $_SESSION['e_email'] = "Ten adres  email został już użyty do rejestracji konta.";
-        }
+      if((filter_var($emailB, FILTER_VALIDATE_EMAIL)) == false || ($emailB != $email)){
+          $validation = false;
+          $_SESSION['e_email'] = "Podaj poprawny adres email.";
+      } else {
+          $query = $this->db->prepare('SELECT id FROM users WHERE email = :email');
+          $query->bindValue(':email', $email, PDO::PARAM_STR);
+          $query->execute();
+          if($query->rowCount()){
+              $validation = false;
+              $_SESSION['e_email'] = "Ten adres  email został już użyty do rejestracji konta.";
+          }
+      }
     }
 
     //Check the correctness of the password
