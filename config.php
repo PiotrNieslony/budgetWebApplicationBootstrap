@@ -2,7 +2,7 @@
     return [
       //database
         'host' => 'localhost',
-        'db' => 'budget',
-        'user' => 'root',
-        'pass' => ''
+        'db' => 'nies_budget',
+        'user' => 'nies_budget',
+        'pass' => '&&2BmMDY0YkD'
     ];
