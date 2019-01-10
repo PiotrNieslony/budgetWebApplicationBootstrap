@@ -32,12 +32,12 @@
 						<?php
 			          switch($action):
 									case 'dodaj-przychod' :
+									$budget->addIncome();
 										include 'templates/addIncome.php';
-										$budget->addIncome();
 										break;
 			            case 'dodaj-wydatek':
-			              include 'templates/addExpense.php';
 										$budget->addExpense();
+			              include 'templates/addExpense.php';
 			              break;
 			            case 'przegladaj-bilans':
 										$balance = $budget->balance();
