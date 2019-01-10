@@ -21,6 +21,7 @@ function generateTable(incomesArray){
         sumOfIncomes += incomesArray[i][1];
         insomesHTML = insomesHTML + tablePart;
     }
+    sumOfIncomes = round(sumOfIncomes,2);
     insomesHTML += '<tr>' +
         '<td colspan="2">Suma</td>' +
         '<th>' + sumOfIncomes +'</th>' +
@@ -34,17 +35,22 @@ var sumOfExpenses = sumOfItem(expensesArray);
 $('.incomes-table tbody').html(generateTable(incomesArray));
 $('.expeses-table tbody').html(generateTable(expensesArray));
 
+function round(value, precision) {
+    var aPrecision = Math.pow(10, precision);
+    return Math.round(value*aPrecision)/aPrecision;
+}
+
 //////// GUDGET MESSAGE ///////
 var message = "";
 if(sumOfIncomes > sumOfExpenses){
     message = "<strong>Gratulacje!</strong><br />" +
         "Wspaniale zarządzasz finansami. Posiadasz <strong>" +
-        (sumOfIncomes -  sumOfExpenses) +
+        (round((sumOfIncomes -  sumOfExpenses),2)) +
         " zł</strong> wolnych środków. ";
 } else {
     message = "<strong>Ostrożnie!</strong><br />" +
         "Wpadasz w dług. Twoje saldo to <strong>" +
-        (sumOfIncomes -  sumOfExpenses) +
+        (round((sumOfIncomes -  sumOfExpenses),2)) +
         " zł</strong>.";
 }
 
@@ -153,4 +159,3 @@ $( "#date-scope" ).on("change", function () {
 $('#dateModalForm').on('submit', function () {
     $('#dateModalForm').trigger('submit', [ 'variable_name']);
 })
-
