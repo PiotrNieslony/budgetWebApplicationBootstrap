@@ -158,9 +158,21 @@ svg{
           user-select: none;
 }
 
+.sidebar p{
+  padding:10px 7px;
+  color: rgba(57,129,130,1);
+  font-weight: bold;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.sidebar p b{
+  text-transform: capitalize;
+}
+
 .main-menu ul {
   margin: 0;
-  padding: 20px;
+  padding: 0px 20px 20px;
 }
 
 .main-menu li {
@@ -213,6 +225,14 @@ svg{
 
 .sticky {
   top: 0;
+}
+
+.subCategory{
+  display: none;
+  padding-left: 20px;
+}
+.form-group .radio.mainCategory label{
+  font-weight:bold;
 }
 
 /*** ADD EXPENSES and ADD INCOME - PAGE ***/
