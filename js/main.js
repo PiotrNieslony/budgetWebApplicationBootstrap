@@ -71,7 +71,6 @@ $(function() {
         mm2 = 12;
         --yyyy2;
     }
-    console.log(mm2);
     if(mm < 10) mm = "0" + mm;
     if(mm2 < 10) mm2 = "0" + mm2;
     if(dd < 10) dd = "0" + dd;
@@ -92,12 +91,13 @@ $(function() {
 
 //category
 $(".mainCategory").click(function(){
-  var handle = $(this);
-  $(".mainCategory.active").next(".subCategory").hide(200, function(){
-    $(".mainCategory.active").removeClass("active");
-  });
-  $(this).next(".subCategory").show(200, function(){
-      console.log("animate ok")
-      handle.addClass("active");
-  });
+  if(!$(this).hasClass("active")){
+    var handle = $(this);
+    $(".mainCategory.active").next(".subCategory").hide(200, function(){
+      $(".mainCategory.active").removeClass("active");
+    });
+    $(this).next(".subCategory").show(200, function(){
+        handle.addClass("active");
+    });
+  }
 })

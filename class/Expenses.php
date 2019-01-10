@@ -46,7 +46,11 @@ class Expenses {
         $query->bindValue(':date_of_expense', $_POST['expenseDate'],  PDO::PARAM_STR);
         $query->bindValue(':expense_comment', $_POST['expenseComment'],  PDO::PARAM_STR);
         $query->execute();
-        $_SESSION['success'] = "Dodano wydatek ".$_POST['expenseAmount']." zł";
+        $categoryId = $_POST['categorys'];
+        $query2 = $this->db->query("SELECT name FROM expenses_category_assigned_to_users WHERE id = $categoryId");
+        $row = $query2->fetch();
+        $categoryName = $row[0];
+        $_SESSION['success'] = "Dodano wydatek ".$_POST['expenseAmount']." zł do kategorii <b>".$categoryName."</b> ";
         return true;
     }
     return false;

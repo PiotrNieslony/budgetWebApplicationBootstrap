@@ -45,7 +45,11 @@ class Incomes {
         $query->bindValue(':date_of_income', $_POST['incomeDate'],  PDO::PARAM_STR);
         $query->bindValue(':income_comment', $_POST['incomeComment'],  PDO::PARAM_STR);
         $query->execute();
-        $_SESSION['success'] = "Dodano przychód w wysokości: ".$_POST['incomeAmount'];
+        $categoryId = $_POST['categorys'];
+        $query2 = $this->db->query("SELECT name FROM incomes_category_assigned_to_users WHERE id = $categoryId");
+        $row = $query2->fetch();
+        $categoryName = $row[0];
+        $_SESSION['success'] = "Dodano przychód w wysokości ".$_POST['incomeAmount']." do kategorii <b>".$categoryName."</b> ";
         return true;
     }
     return false;
