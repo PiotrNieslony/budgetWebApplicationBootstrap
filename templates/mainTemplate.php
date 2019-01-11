@@ -17,7 +17,6 @@
 	<script src="jquery/jquery-3.3.1.min.js"></script>
 	<script src="bootstrap/bootstrap.min.js"></script>
 	<script src="jquery/jquery-ui.min.js"	></script>
-	<script src="jquery/jquery.touchSwipe.min.js"	></script>
 	<script  src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>

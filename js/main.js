@@ -61,17 +61,6 @@ $(window).scroll(function() {
   stickyNav();
 });
 
-$(function() {
-  $("body").swipe( {
-    swipe:function(event, direction, distance, duration, fingerCount, fingerData) {
-      if(direction === "right" && $('.sidebar').css('left') !== '0px' && ($( document ).width() < 992)) toggleSidebar();
-      else if( direction === "left" && $('.sidebar').css('left') === '0px' && ($( document ).width() < 992)) toggleSidebar();
-    }
-  });
-});
-
-
-
 //Data picker
 $(function() {
     var today = new Date();
