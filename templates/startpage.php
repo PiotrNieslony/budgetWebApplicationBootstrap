@@ -29,7 +29,7 @@
             <li><a class="btn btn-default" href="rejestracja">Rejestracja</a></li>
             <li><a class="btn btn-primary active" href="zaloguj">Zaloguj się</a></li>
           </ul>
-					<h1 id="logo"><i>$</i> Your<span>Budget</span></h1>
+					<h1 id="logo"><a><i>$</i> Your<span>Budget</span></a></h1>
         </nav>
 			</header>
 		</div>
