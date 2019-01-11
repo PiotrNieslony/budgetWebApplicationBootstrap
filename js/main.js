@@ -93,7 +93,7 @@ $(function() {
 
 //category
 $(".mainCategory").click(function(){
-  if(!$(this).hasClass("active")){
+  if(!$(this).hasClass("active") && $(this).next(".subCategory").has(".radio").length){
     var handle = $(this);
     $(".mainCategory.active").next(".subCategory").hide(200, function(){
       $(".mainCategory.active").removeClass("active");
