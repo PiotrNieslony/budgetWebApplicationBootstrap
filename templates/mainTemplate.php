@@ -24,7 +24,7 @@
 	<div class="container-fluid">
 		<div class="header">
 			<header>
-				<h1 id="logo"><i>$</i> Your<span>Budget</span></h1>
+				<h1 id="logo"><a href="przegladaj-bilans"><i>$</i> Your<span>Budget</span></a></h1>
 			</header>
 		</div>
         <?php require_once 'sidebar.php' ?>
