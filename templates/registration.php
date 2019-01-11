@@ -12,7 +12,7 @@
                 <input type="password" class="form-control" name="inputPassword2" placeholder="powtórz hasło" value="<?= isset($_SESSION['typedPass2']) ? $_SESSION['typedPass2']: ""; unset($_SESSION['typedPass2']) ?>"required/>
                 <label><input type="checkbox" name="akceptTerms" <?=  isset($_SESSION['akceptTerms']) ? "checked": ""; unset($_SESSION['akceptTerms']) ?> required/> Akceptuję regulamin</label>
                 <?= isset($_SESSION['e_terms']) ? "<p class='alert alert-danger'>".$_SESSION['e_terms']."</p>": ""; unset($_SESSION['e_terms'])?>
-                <input type="submit" class="form-control btn btn-default" value="Zarejestuj się" />
-                <a href="login.php" class="text-center">Zaloguj się</a>
+                <input type="submit" class="form-control btn btn-primary" value="Zarejestuj się" />
+                <a href="zaloguj" class="text-center">Zaloguj się</a>
             </div>
 </form>

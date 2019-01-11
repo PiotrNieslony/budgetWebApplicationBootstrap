@@ -1,6 +1,8 @@
 body{
   background: url("img/intersection.png") #efefef;
+  background-attachment: fixed;
   color:#398182;
+  font-family: 'Titillium Web', sans-serif;
 }
 
 svg{
@@ -14,6 +16,7 @@ svg{
     padding: 15px 5px;
     margin: 10px 20px 10px 0;
     width: 220px;
+    height:62px;
     text-align: left;
     line-height: 30px;
     border-left: 10px solid #398182;
@@ -27,6 +30,7 @@ svg{
    background-color .5s ease-in-out;
     cursor: pointer;
     box-sizing: border-box;
+    display:block;
 }
 
 #logo:hover {
@@ -233,6 +237,50 @@ svg{
 }
 .form-group .radio.mainCategory label{
   font-weight:bold;
+}
+
+.banner-container{
+  background-color: rgba(57,129,130,1);
+  background-image: url("img/budget-baner.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 600px;
+  color:white;
+  text-transform: uppercase;
+  max-width: 1920px;
+  margin:0 auto;
+  display:block;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.overlay h1{
+  font-weight: lighter;
+  text-align: center;
+  font-size:50px;
+  padding-top: 250px;
+}
+
+.banner-container .overlay{
+  background-color: rgba(57,129,130,0.8);
+  height: 100%;
+  width: 100%;
+  display:block;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.banner {
+  border-bottom: 4px solid rgba(57,129,130,1);
+}
+
+.startpage .description{
+  background-color: #E6E7E8;
+  padding: 50px 0;
+}
+
+.startpage .description .lead{
+  font-weight: normal;
 }
 
 /*** ADD EXPENSES and ADD INCOME - PAGE ***/
