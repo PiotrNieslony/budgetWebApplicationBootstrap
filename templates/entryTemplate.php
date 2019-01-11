@@ -17,7 +17,7 @@
 <body>
 	<div class="login-header">
 		<header>
-			<a href="start"><h1 id="logo"><i>$</i> Your<span>Budget</span></h1></a>
+			<h1 id="logo"><a href="start"><i>$</i> Your<span>Budget</span></a></h1>
 		</header>
 	</div>
 	<main>
