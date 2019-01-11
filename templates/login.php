@@ -8,7 +8,7 @@
                        value="<?= (isset($_POST['inputLogin'])) ? $_POST['inputLogin'] : ""; ?>">
     <input type="password" class="form-control" name="inputPassword" placeholder="hasło"
                        value="<?= (isset($_POST['inputPassword'])) ? $_POST['inputPassword'] : ""; ?>">
-    <input type="submit" class="form-control btn btn-default" value="Zaloguj się" />
+    <input type="submit" class="form-control btn btn-primary" value="Zaloguj się" />
     <a href="rejestracja" class="text-center">Zarejestruj się</a>
   </div>
 </form>

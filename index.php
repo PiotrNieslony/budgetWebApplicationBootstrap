@@ -6,11 +6,12 @@ $config = require_once('config.php');
 
 $budget = new Budget($config['host'],$config['user'], $config['pass'],$config['db']);
 
-$action = 'showMain';
+$action = 'start';
 if($budget->parsePath()) $action = $budget->parsePath();
 if(!isset($_SESSION['loggedUser'])
 && $action != 'rejestracja'
-&& $action != 'potwierdzenie-rejestracji') $action = 'zaloguj';
+&& $action != 'potwierdzenie-rejestracji'
+&& $action != 'start') $action = 'zaloguj';
 if(isset($_POST['inputLogin']) && isset($_POST['inputPassword'])) $action = 'zaloguj';
 
 switch($action):
@@ -31,6 +32,9 @@ switch($action):
   case 'wyloguj';
     $budget->logout();
     header('Location:zaloguj');
+    break;
+  case 'start';
+    include 'templates/startpage.php';
     break;
   default;
     include 'templates/mainTemplate.php';

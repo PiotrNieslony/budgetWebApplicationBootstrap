@@ -42,7 +42,7 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <button type="submit" class="btn btn-default btn-block ">Dodaj</button>
+            <button type="submit" class="btn btn-primary btn-block ">Dodaj</button>
           </div>
           <div class="col-md-4">
             <button type="button" class="btn btn-warning btn-block ">Anuluj</button>
