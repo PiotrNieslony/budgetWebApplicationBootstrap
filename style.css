@@ -73,6 +73,15 @@ svg{
   background-color:#19B3B5;
 }
 
+#logo a{
+  color:inherit;
+}
+
+#logo a:hover{
+  text-decoration: none;
+  color:inherit;
+}
+
 /*** LOGIN PAGE ***/
 .form-login a{
   width: 100%;
@@ -244,7 +253,7 @@ svg{
   background-image: url("img/budget-baner.jpg");
   background-repeat: no-repeat;
   background-position: center;
-  height: 600px;
+  height: 400px;
   color:white;
   text-transform: uppercase;
   max-width: 1920px;
@@ -258,7 +267,7 @@ svg{
   font-weight: lighter;
   text-align: center;
   font-size:50px;
-  padding-top: 250px;
+  padding-top: 115px;
 }
 
 .banner-container .overlay{
