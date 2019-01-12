@@ -1,6 +1,5 @@
 .idea
-.gitignoer
+.gitignore
 test.html
 .info/
-projekt_bazy_danych.sql
-test.sql
+*.sql

@@ -3,7 +3,7 @@
 <html lang="pl">
 <head>
 	<meta charset="utf-8" />
-	<title>Budget - Rejestracja</title>
+	<title>YourBudget</title>
 
 	<meta name="description" content="Opis w Google" />
 	<meta name="keywords" content="słowa, kluczowe, wypisane, po, porzecinku" />
@@ -29,7 +29,7 @@
             <li><a class="btn btn-default" href="rejestracja">Rejestracja</a></li>
             <li><a class="btn btn-primary active" href="zaloguj">Zaloguj się</a></li>
           </ul>
-					<h1 id="logo"><i>$</i> Your<span>Budget</span></h1>
+					<h1 id="logo"><a><i>$</i> Your<span>Budget</span></a></h1>
         </nav>
 			</header>
 		</div>
