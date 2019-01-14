@@ -24,7 +24,6 @@
                                         <h4 class="modal-title">Wybierz zakres dat</h4>
                                     </div>
                                     <div class="modal-body">
-
                                             <div class="form-group">
                                                 <strong>Data od</strong>
                                                 <input name="dateFrom" class="date date-from form-control" type="text" placeholder="RRRR-MM-DD" required
@@ -162,6 +161,7 @@
       </table>
     </div>
   </div>
+</div>
 
   <script>
       //incomes data
