@@ -38,12 +38,14 @@
             </div>
           </div>
         </div>
-        <div>
-          <div class="form-group">
-            <strong>Kategoria</strong>
-            <?php
-              $budget->showExpensCategory();
-            ?>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <strong>Kategoria</strong>
+              <?php
+                $budget->showExpensCategory();
+              ?>
+            </div>
           </div>
         </div>
         <div class="row">
