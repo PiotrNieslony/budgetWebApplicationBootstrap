@@ -8,8 +8,8 @@
 	<meta name="description" content="Opis w Google" />
 	<meta name="keywords" content="słowa, kluczowe, wypisane, po, porzecinku" />
 	<link rel="stylesheet" href="bootstrap/bootstrap.css" type="text/css" />
-	<link rel="stylesheet" href="style.css" type="text/css" />
 	<link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,400,700&amp;subset=latin-ext" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css" type="text/css" />
 	<script src="jquery/jquery-3.3.1.min.js"></script>
     <script src="bootstrap/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
