@@ -180,7 +180,9 @@ class Budget {
     $categorys = $categoryQuery->fetchAll();
     foreach($categorys as $category){
         echo "<div class=\"radio\">
-                    <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[1]</label>
+                    <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[1]
+                    <span class='checkmark'></span>
+                    </label>
                 </div>";
     }
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
@@ -211,14 +213,18 @@ class Budget {
     foreach($categorys as $category){
       if($category[1] == null){
         echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
-                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]</label>
+                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
+                <span class='checkmark'></span>
+                </label>
             </div>
             <div class=\"subCategory\">";
 
         foreach($categorys as $subCategory)
             if($subCategory[1] == $category[0]){
               echo "<div class=\"radio\" id=\"expenseCategory\">
-                      <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]</label>
+                      <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
+                      <span class='checkmark'></span>
+                      </label>
                   </div>";
             }
         echo "</div>";
