@@ -1,0 +1,371 @@
+$primary-color: #398182;
+@import "../bootstrap/bootstrap/mixins/gradients";
+
+body {
+  background: url("../img/intersection.png") #efefef;
+  background-attachment: fixed;
+  color: $primary-color;
+  font-family: 'Titillium Web', sans-serif;
+}
+
+/*** LOGO ***/
+#logo {
+  color: $primary-color;
+  background-color: #efefef;
+  margin: 10px 20px 10px 0;
+  width: 220px;
+  height: 62px;
+  text-align: left;
+  line-height: 30px;
+  border-left: 10px solid $primary-color;
+  letter-spacing: 2px;
+  font-size: 1.3em;
+  -webkit-box-shadow: 0px 0px 25px 10px rgba(204, 204, 204, 0.8);
+  -moz-box-shadow: 0px 0px 25px 10px rgba(204, 204, 204, 0.8);
+  box-shadow: 0px 0px 25px 10px rgba(204, 204, 204, 0.8);
+  transition: border .5s ease-in-out, color .5s ease-in-out, background-color .5s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    color: #19B3B5;
+    background-color: #f8f8f8;
+    border-left: 10px solid #19B3B5;
+  }
+  span {
+    color: $primary-color;
+    text-shadow: none;
+    font-weight: 200;
+    transition: all .5s ease-in-out;
+  }
+  &:hover span {
+    color: #19B3B5;
+  }
+  i {
+    text-decoration: none;
+    font-style: normal;
+    background-color: $primary-color;
+    display: block;
+    float: left;
+    margin: 5px 7px 5px 15px;
+    height: 40px;
+    width: 40px;
+    border-radius: 20px;
+    color: white;
+    line-height: 40px;
+    text-align: center;
+    transition: all 0.5s ease-in-out;
+    position: relative;
+    top: -9px;
+  }
+  &:hover i {
+    transform: rotate(360deg);
+    background-color: #19B3B5;
+  }
+  a {
+    font-family: inherit;
+    padding: 15px 5px;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    &:hover {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+}
+
+/*** LOGIN PAGE ***/
+
+.form-login {
+  a {
+    width: 100%;
+    display: block;
+    color: $primary-color;
+  }
+  input {
+    margin-bottom: 10px;
+  }
+  width: 350px;
+  background-color: #efefef;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px 30px;
+  border-left: 10px solid $primary-color;
+  border-right: 10px solid $primary-color;
+  box-shadow: 0px 0px 25px 10px rgba(204, 204, 204, 0.8);
+  h2 {
+    color: #999;
+    margin: 15px 0 0;
+    padding: 0;
+    letter-spacing: 1px;
+    font-size: 1.5em;
+  }
+  .btn {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+.login-header #logo {
+  width: 210px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+  position: relative;
+  left: -70px;
+}
+
+/*** MAIN VIEW ***/
+
+.content {
+  background-color: #efefef;
+  margin: 10px 0 0 245px;
+  padding: 1% 3% 4%;
+  -webkit-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  -moz-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  transition: all 0.6s ease-in-out;
+  position: relative;
+  h1 {
+    border-bottom: 1px solid;
+  }
+}
+
+.content-full {
+  margin: 10px 0 0;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: rgba(240, 240, 240, 0.8);
+  margin: 20px 15px;
+  padding: 0;
+  border: 1px solid white;
+  -webkit-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  -moz-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  float: left;
+  color: white;
+  left: 0px;
+  z-index: 100;
+  position: fixed;
+  transition: all 0.5s ease-in-out;
+  top: 60px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  p {
+    padding: 10px 7px;
+    color: rgba(57, 129, 130, 1);
+    font-weight: bold;
+    margin-bottom: 0;
+    text-align: center;
+    b {
+      text-transform: capitalize;
+    }
+  }
+}
+
+.main-menu {
+  ul {
+    margin: 0;
+    padding: 0px 20px 20px;
+  }
+  li {
+    list-style-type: none;
+    a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      border-radius: 5px;
+      padding: 10px 7px;
+      margin-bottom: 5px;
+      background-color: rgba(57, 129, 130, 1);
+      text-align: center;
+      &:hover {
+        background-color: #19B3B5;
+      }
+    }
+  }
+}
+
+.switcher {
+  display: block;
+  position: relative;
+  float: right;
+  right: -35px;
+  top: 20px;
+  background-color: rgba(57, 129, 130, 0.8);
+  width: 35px;
+  -webkit-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  -moz-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
+  box-shadow: 8px 0px 10px 2px rgba(204, 204, 204, 0.8);
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+  i {
+    padding: 9px 0 4px;
+    display: block;
+    transition: all 0.5s ease-in-out;
+  }
+}
+
+.switcher-rotate i {
+  transform: rotate(180deg);
+}
+
+.hide-sidebar {
+  left: -249px;
+}
+
+.sticky {
+  top: 0;
+}
+
+.subCategory {
+  display: none;
+  padding-left: 20px;
+}
+
+.form-group .radio.mainCategory label {
+  font-weight: bold;
+}
+
+/* Start page*/
+
+.startpage {
+  background: #E6E7E8;
+  /*  background-image: url("img/budget-bg.jpg");
+    background-position: top;
+    background-repeat: no-repeat;*/
+  .header .btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 0;
+  }
+  .banner-container {
+    background-color: #5A9697;
+    background-image: url("../img/budget-bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 400px;
+    color: white;
+    text-transform: uppercase;
+    margin: 0 auto;
+    display: block;
+    box-sizing: border-box;
+    position: relative;
+    h1 {
+      font-weight: lighter;
+      text-align: center;
+      font-size: 50px;
+      padding-top: 115px;
+      margin-top: 0;
+    }
+  }
+  h2{
+    margin-bottom: 30px;
+    font-weight: lighter;
+  }
+  .banner {
+    border-bottom: 4px solid rgba(57, 129, 130, 1);
+  }
+  .description {
+    background-color: #E6E7E8;
+    padding: 50px 0;
+    .lead {
+      font-weight: normal;
+    }
+  }
+  .advantages {
+    @include gradient-radial(#589495, #367072);
+    color: white;
+    font-size: 22px;
+    padding-bottom: 30px;
+    li{
+      padding: 10px 0;
+      &:before {
+        content: "\e013";
+        font-family: 'Glyphicons Halflings';
+        padding-right: 15px;
+        padding-top: 5px;
+        font-size: 19px;
+      }
+    }
+    img {
+      border: 2px solid white;
+      border-radius: 5px;
+    }
+  }
+  .registert-now{
+    padding: 50px;
+    .btn{
+      font-size: 30px;
+      font-weight: lighter;
+    }
+  }
+}
+
+
+
+/*** ADD EXPENSES and ADD INCOME - PAGE ***/
+
+.add-income .btn, .add-expense .btn {
+  margin-top: 15px;
+}
+
+/*** BALANCE PAGE ***/
+
+#summary-message {
+  margin-top: 208px;
+  font-size: 1.5em;
+}
+
+.chart > div > div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table {
+  thead {
+    background-color: $primary-color;
+    color: white;
+  }
+  border-bottom: 4px solid $primary-color;
+}
+
+/*** ADAPTIV STYLE ***/
+@media only screen and (max-width: 992px) {
+  #summary-message {
+    margin-top: 0px;
+    text-align: center;
+  }
+  .startpage{
+    .advantages {
+      font-size: 15px;
+      li{
+        padding: 0 5px;
+      }
+    }
+    .registert-now{
+      .btn{
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .form-login {
+    width: 100%;
+  }
+  .login-header #logo {
+    left: 0;
+    margin-left: 15px;
+  }
+  .content {
+    margin: 5px;
+  }
+}
