@@ -55,4 +55,16 @@ class Expenses {
     }
     return false;
   }
+
+  public function sumExpenses($balaceDateFrom,$balaceDateTo){
+    $loggedUserId = $_SESSION['loggedUser']['id'];
+    $queryExpens = $this->db->query(
+          "SELECT SUM(expenses.amount) AS sum
+            FROM expenses
+            WHERE expenses.user_id = $loggedUserId
+            AND date_of_expense >= '$balaceDateFrom'
+            AND date_of_expense <= '$balaceDateTo';");
+    $expenses = $queryExpens->fetchAll();
+    return $expenses[0]['sum'];
+  }
 }

@@ -334,6 +334,22 @@ body {
     background-color: #398182;
     color: white; }
 
+.expeses-table2 tr {
+  cursor: pointer; }
+
+.table tr td:last-child {
+  text-align: right; }
+
+.table .extended span {
+  transform: rotate(180deg); }
+
+.sub-category-table {
+  border-bottom: none;
+  margin-left: 2%;
+  margin-bottom: 0;
+  width: 98%;
+  color: black; }
+
 /*** ADAPTIV STYLE ***/
 @media only screen and (max-width: 992px) {
   #summary-message {

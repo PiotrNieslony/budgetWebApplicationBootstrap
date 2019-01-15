@@ -7,6 +7,28 @@ function sumOfItem(partOfBudget){
     return sumOfIncomes;
 }
 
+//tables buttons
+$('.table tr td .extend').click(function(){
+  $(this).toggleClass('extended');
+  $(this).closest('tr').next('tr').toggle(300);
+})
+
+$('.table tr td .edit').click(function(){
+  var obtainedValues =[];
+  var counter = 0;
+  $(this).closest('tr').find('td').each(function(index, element){
+  if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+  else obtainedValues.push($( this ).text());
+  counter ++
+  });
+  console.log(obtainedValues);
+  $('.editModal').modal()
+  $("input[name='expenseAmount']").val(obtainedValues[3]);
+  $("input[name='expenseDate']").val(obtainedValues[1]);
+  $("input[name='paymentType']:contains('"+obtainedValues[2]+"')").prop('selected', true);
+  $("input[name='categorys']:contains('"+obtainedValues[2]+"')").prop('selected', true);
+})
+
 //////// generate table ////////
 function generateTable(incomesArray){
     var insomesHTML = "";

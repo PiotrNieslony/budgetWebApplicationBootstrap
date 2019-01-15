@@ -132,7 +132,7 @@
   <div class="
     col-lg-9 col-lg-pull-3
     col-md-7 col-md-pull-5">
-    <div class="budget-table expeses-table">
+    <div class="budget-table expeses-table2">
       <table class="table table-bordered table-striped table-hover">
         <caption>Tabela wydatków</caption>
         <thead>
@@ -140,28 +140,19 @@
             <th>l.p.</th>
             <th>Kategoria</th>
             <th>Wartość</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mieszkanie</td>
-            <td>1600</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jedzenie</td>
-            <td>1050</td>
-          </tr>
-          <tr>
-            <td colspan="2">Suma</td>
-            <td>00</td>
-          </tr>
+          <?php $budget->showBalance();
+            echo "<br>kolejna tab<br>";
+          ?>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+<?php include "editExpenseModal.php" ?>
 
   <script>
       //incomes data
