@@ -60,7 +60,7 @@ th {
 
   // Nesting
   .table {
-    background-color: $body-bg;
+    background-color: darken($table-bg-accent, 20%);
   }
 }
 
@@ -109,10 +109,16 @@ th {
 // Zebra-striping
 //
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
-
-.table-striped {
-  > tbody > tr:nth-of-type(odd) {
-    background-color: $table-bg-accent;
+.table{
+  &.table-striped {
+    > tbody > tr:nth-of-type(odd) {
+      background-color: $table-bg-accent;
+    }
+    .table{
+      > tbody > tr:nth-of-type(odd) {
+        background-color: darken($table-bg-accent, 25%);
+      }
+    }
   }
 }
 
@@ -120,10 +126,16 @@ th {
 // Hover effect
 //
 // Placed here since it has to come after the potential zebra striping
-
-.table-hover {
-  > tbody > tr:hover {
-    background-color: $table-bg-hover;
+.table{
+  &.table-hover {
+    > tbody > tr:hover {
+      background-color: darken($table-bg-accent, 15%);
+    }
+    .table {
+      > tbody > tr:hover {
+        background-color: darken($table-bg-accent, 35%);
+      }
+    }
   }
 }
 
