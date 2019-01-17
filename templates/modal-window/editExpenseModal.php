@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="exampleModalLabel">Edycja</h4>
       </div>
       <div class="modal-body success-content" style="display:none;">
-        <p class='alert alert-success'>Dane zostały zmienione<p>
+        <p class='alert alert-success'>Dane zostały zmienione</p>
       </div>
       <div class="modal-body proper-content">
         <div class="row">

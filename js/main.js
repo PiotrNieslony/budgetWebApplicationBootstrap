@@ -102,5 +102,9 @@ $(".mainCategory").click(function(){
     $(this).next(".subCategory").show(200, function(){
         handle.addClass("active");
     });
+  } else {
+    $(".mainCategory.active").next(".subCategory").hide(200, function(){
+      $(".mainCategory.active").removeClass("active");
+    });
   }
 })

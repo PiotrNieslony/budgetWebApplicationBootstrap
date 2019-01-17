@@ -41,6 +41,9 @@ switch($action):
   case 'edit-expense-modal';
     $budget->editExpense();
     break;
+  case 'delete-expense-modal';
+    $budget->deleteExpense();
+    break;
   case 'load-expenses';
     echo $budget->showBalance();
     break;

@@ -27,7 +27,7 @@ $('body').on('click', '.table tr td .extend',function(){
   }
 })
 
-//fills in the form fields in modal edit
+//EDIT EXPENSE MODAL
 $('body').on('click','.table tr td .edit', function(){
   $(".editExpenseModal .success-content").hide();
   $(".editExpenseModal .proper-content").show();
@@ -43,6 +43,7 @@ $('body').on('click','.table tr td .edit', function(){
     counter ++;
   });
   console.log(obtainedValues);
+  //fills the form fields in modal edit
   $('.editExpenseModal').modal();
   $('.editExpenseModal').attr('id', obtainedValues[0] );
   $("input[name='expenseAmount']").val(obtainedValues[3]);
@@ -78,16 +79,65 @@ $(".editExpenseModal button[type='submit']").click(function(){
         $("." + key).text(data[key]);
         $("." + key).show(200);
         console.log(data[key]);
-        loadExpenses();
-        $(".editExpenseModal .success-content").show();
-        $(".editExpenseModal .proper-content").hide();
       }
+      loadExpenses();
+      $(".editExpenseModal .success-content").show();
+      $(".editExpenseModal .proper-content").hide();
     },
     error: function(msg){
       console.log('Exception:', msg);
     }
   });
 });
+
+//DELETE EXPENSE MODAL
+$('body').on('click','.table tr td .delete', function(){
+  $(".deleteExpenseModal .success-content").hide();
+  $(".deleteExpenseModal .proper-content").show();
+  $(".deleteExpenseModal .alert.alert-danger").hide();
+  var obtainedValues =[];
+  var counter = 0;
+  $(this).closest('tr').find('td').each(function(index, element){
+    if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 5) obtainedValues.push(
+      $( this ).closest('table').closest('tr').prev().find('td:nth-child(2)').text()
+    );
+    else obtainedValues.push($( this ).text());
+    counter ++;
+  });
+  console.log(obtainedValues);
+  $('.deleteExpenseModal').modal();
+  $('.deleteExpenseModal').attr('id', obtainedValues[0] );
+  //generate message
+  var message = "Czy na pewno chcesz usunąć wydatek z kategorii <b>"
+  + obtainedValues[5] + "</b>, na kwotę <b>"
+  + obtainedValues[3] + "</b>, z dnia <b>" + obtainedValues[1];
+  if (obtainedValues[4]) message = message + "</b>, opatrzony komentarzem <b>" + obtainedValues[4] +"</b>?";
+  else message = message +"</b>?";
+  $('.deleteExpenseModal .proper-content p').html(message);
+})
+
+// send delete comand expense to db
+$(".deleteExpenseModal button[type='submit']").click(function(){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=delete-expense-modal",
+    data: {
+      expenseID:   $('.deleteExpenseModal').attr('id')
+    },
+    dataType: "json",
+    cache: false,
+    success: function(data){
+      loadExpenses();
+      $(".deleteExpenseModal .success-content").show();
+      $(".deleteExpenseModal .proper-content").hide();
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+});
+
 
 //LOAD EXPENSES
 function loadExpenses(){
@@ -104,6 +154,7 @@ function loadExpenses(){
     }
   });
 }
+
 //////// generate table ////////
 function generateTable(incomesArray){
     var insomesHTML = "";
