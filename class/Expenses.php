@@ -115,16 +115,21 @@ class Expenses {
         $query->bindValue(':expense_comment', $_POST['expenseComment'],  PDO::PARAM_STR);
         $query->bindValue(':expenseID',  $_POST['expenseID'], PDO::PARAM_INT);
         $query->execute();
-        $categoryId = $_POST['categorys'];
-        $query2 = $this->db->query("SELECT name FROM expenses_category_assigned_to_users WHERE id = $categoryId");
-        $row = $query2->fetch();
-        $categoryName = $row[0];
-        $_SESSION['success'] = "Dodano wydatek ".$_POST['expenseAmount']." zł do kategorii <b>".$categoryName."</b> ";
         $output = array('ok');
         echo json_encode($output);
     } else {
       echo json_encode($errors);
     }
+  }
+
+  public function delete(){
+    if(!isset($_POST['expenseID'])) return false;
+    $errors = array();
+    $query = $this->db->prepare('DELETE FROM expenses WHERE id  = :expenseID');
+    $query->bindValue(':expenseID',  $_POST['expenseID'], PDO::PARAM_INT);
+    $query->execute();
+    $output = array('ok');
+    echo json_encode($output);
   }
 
   public function sumExpenses($balaceDateFrom,$balaceDateTo){

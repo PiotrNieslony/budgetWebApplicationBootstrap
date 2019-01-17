@@ -9,7 +9,7 @@ class Budget {
   public function initDB($host, $user, $pass, $db){
     try{
         $db = new MyDB("mysql:host={$host};dbname={$db};charset = utf8",$user, $pass, [
-            MyDB::ATTR_EMULATE_PREPARES => false,
+            MyDB::ATTR_EMULATE_PREPARES => true,
             MyDB::ATTR_ERRMODE => MyDB::ERRMODE_EXCEPTION]);
         return $db;
     } catch (PDOException $error) {
@@ -174,19 +174,36 @@ class Budget {
   }
 
   public function showIncomsCategory() {
-    $categoryQuery = $this->db->prepare('SELECT id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id');
+    $categoryQuery = $this->db->prepare('SELECT id, parent_category_id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id');
     $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
     $categoryQuery->execute();
     $categorys = $categoryQuery->fetchAll();
-    foreach($categorys as $category){
-        echo "<div class=\"radio\">
-                    <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[1]
-                    <span class='checkmark'></span>
-                    </label>
-                </div>";
-    }
+    $this->generateCategoryHtml($categorys);
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
     unset($_SESSION['e_categorys']);
+  }
+
+  public function generateCategoryHtml($categoryArray){
+    foreach($categoryArray as $category){
+      if($category[1] == $category[0]){
+        echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
+                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
+                <span class='checkmark'></span>
+                </label>
+            </div>
+            <div class=\"subCategory\">";
+
+        foreach($categoryArray as $subCategory)
+            if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
+              echo "<div class=\"radio\" id=\"expenseCategory\">
+                      <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
+                      <span class='checkmark'></span>
+                      </label>
+                  </div>";
+            }
+        echo "</div>";
+      }
+    }
   }
 
   public function addExpense(){
@@ -197,6 +214,11 @@ class Budget {
   public function editExpense(){
     $expenses = new Expenses($this->db);
     return $expenses->edit();
+  }
+
+  public function deleteExpense(){
+    $expenses = new Expenses($this->db);
+    return $expenses->delete();
   }
 
   public function showExpensPaymentMethod() {
@@ -214,31 +236,12 @@ class Budget {
     $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
     $categoryQuery->execute();
     $categorys = $categoryQuery->fetchAll();
-    foreach($categorys as $category){
-      if($category[1] == $category[0]){
-        echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
-                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
-                <span class='checkmark'></span>
-                </label>
-            </div>
-            <div class=\"subCategory\">";
-
-        foreach($categorys as $subCategory)
-            if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
-              echo "<div class=\"radio\" id=\"expenseCategory\">
-                      <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
-                      <span class='checkmark'></span>
-                      </label>
-                  </div>";
-            }
-        echo "</div>";
-      }
-    }
+    $this->generateCategoryHtml($categorys);
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
     unset($_SESSION['e_categorys']);
   }
 
-  public function balance() {
+  public function showIncoms() {
     $loggedUserId = $_SESSION['loggedUser']['id'];
     $firstDayOfMonth = new DateTime('first day of this month');
     $lastDayOfMonth = new DateTime('first day of this month');
@@ -263,60 +266,6 @@ class Budget {
         $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
         $balaceDateTo   = $today->format('Y-m-d');
     }
-
-    $queryIncoms = $this->db->query("SELECT  icatu.name AS category, SUM(incomes.amount) AS amount
-                    FROM incomes
-                    INNER JOIN
-                    incomes_category_assigned_to_users icatu
-                    ON incomes.income_category_assigned_to_user_id = icatu.id
-                    WHERE incomes.user_id = $loggedUserId
-                    AND date_of_income >= '$balaceDateFrom'
-                    AND date_of_income <= '$balaceDateTo'
-                    GROUP BY incomes.income_category_assigned_to_user_id
-                    ORDER BY SUM(incomes.amount) DESC;");
-    $queryExpens = $this->db->query("SELECT  ecatu.name AS category, SUM(expenses.amount) AS amount
-                    FROM expenses
-                    INNER JOIN
-                    expenses_category_assigned_to_users ecatu
-                    ON expenses.expense_category_assigned_to_user_id = ecatu.id
-                    WHERE expenses.user_id = $loggedUserId
-                    AND date_of_expense >= '$balaceDateFrom'
-                    AND date_of_expense <= '$balaceDateTo'
-                    GROUP BY expenses.expense_category_assigned_to_user_id
-                    ORDER BY SUM(expenses.amount) DESC;");
-    $incomes = $queryIncoms->fetchAll();
-    $expenses = $queryExpens->fetchAll();
-    $_SESSION['selected-date-from'] = $balaceDateFrom;
-    $_SESSION['selected-date-to'] = $balaceDateTo;
-    return array($incomes, $expenses);
-  }
-
-  public function showBalance() {
-    $loggedUserId = $_SESSION['loggedUser']['id'];
-    $firstDayOfMonth = new DateTime('first day of this month');
-    $lastDayOfMonth = new DateTime('first day of this month');
-    $today = new DateTime();
-    if(isset($_POST['date-scope'])){
-        if($_POST['date-scope'] == "current-month"){
-            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
-            $balaceDateTo   = $today->format('Y-m-d');
-            $_SESSION['current-month'] = true;
-        } elseif ($_POST['date-scope'] == "previous-month"){
-            $firstDayOfMonth->modify('first day of previous month');
-            $lastDayOfMonth->modify('last day of previous month');
-            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
-            $balaceDateTo   = $lastDayOfMonth->format('Y-m-d');
-            $_SESSION['previous-month'] = true;
-        }
-    } elseif (isset($_POST['dateFrom'])){
-        $balaceDateFrom = $_POST['dateFrom'];
-        $balaceDateTo   = $_POST['dateTo'];
-        $_SESSION['custom'] = true;
-    } else {
-        $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
-        $balaceDateTo   = $today->format('Y-m-d');
-    }
-
     $queryIncoms = $this->db->query("SELECT  icatu.name AS category, SUM(incomes.amount) AS amount
                     FROM incomes
                     INNER JOIN
@@ -328,7 +277,7 @@ class Budget {
                     GROUP BY incomes.income_category_assigned_to_user_id
                     ORDER BY SUM(incomes.amount) DESC;");
     $queryExpens = $this->db->query(
-                    "SELECT  ecatu.id AS id, epcatu.name AS category, SUM(expenses.amount) AS amount
+                    "SELECT  epcatu.id AS id, epcatu.name AS category, SUM(expenses.amount) AS amount
                     FROM expenses
                     INNER JOIN expenses_category_assigned_to_users ecatu
                     ON expenses.expense_category_assigned_to_user_id = ecatu.id
@@ -339,7 +288,7 @@ class Budget {
                     AND date_of_expense <= '$balaceDateTo'
                     GROUP BY ecatu.parent_category_id
                     ORDER BY SUM(expenses.amount) DESC;");
-    $incomes = $queryIncoms->fetchAll();
+    $incomesArray = $queryIncoms->fetchAll();
     $expensesArray = $queryExpens->fetchAll();
     $columnsQuantity = sizeof($expensesArray[0])/2;
     $counter = 1;
@@ -366,6 +315,84 @@ class Budget {
     echo "<tr><td colspan=\"2\">Suma</td><th>$sum</th><td></td></tr>";
     $_SESSION['selected-date-from'] = $balaceDateFrom;
     $_SESSION['selected-date-to'] = $balaceDateTo;
+    return array($incomesArray, $expensesArray);
+  }
+
+  public function showExpenses() {
+    $loggedUserId = $_SESSION['loggedUser']['id'];
+    $firstDayOfMonth = new DateTime('first day of this month');
+    $lastDayOfMonth = new DateTime('first day of this month');
+    $today = new DateTime();
+    if(isset($_POST['date-scope'])){
+        if($_POST['date-scope'] == "current-month"){
+            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+            $balaceDateTo   = $today->format('Y-m-d');
+            $_SESSION['current-month'] = true;
+        } elseif ($_POST['date-scope'] == "previous-month"){
+            $firstDayOfMonth->modify('first day of previous month');
+            $lastDayOfMonth->modify('last day of previous month');
+            $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+            $balaceDateTo   = $lastDayOfMonth->format('Y-m-d');
+            $_SESSION['previous-month'] = true;
+        }
+    } elseif (isset($_POST['dateFrom'])){
+        $balaceDateFrom = $_POST['dateFrom'];
+        $balaceDateTo   = $_POST['dateTo'];
+        $_SESSION['custom'] = true;
+    } else {
+        $balaceDateFrom = $firstDayOfMonth->format('Y-m-d');
+        $balaceDateTo   = $today->format('Y-m-d');
+    }
+    $queryIncoms = $this->db->query("SELECT  icatu.name AS category, SUM(incomes.amount) AS amount
+                    FROM incomes
+                    INNER JOIN
+                    incomes_category_assigned_to_users icatu
+                    ON incomes.income_category_assigned_to_user_id = icatu.id
+                    WHERE incomes.user_id = $loggedUserId
+                    AND date_of_income >= '$balaceDateFrom'
+                    AND date_of_income <= '$balaceDateTo'
+                    GROUP BY incomes.income_category_assigned_to_user_id
+                    ORDER BY SUM(incomes.amount) DESC;");
+    $queryExpens = $this->db->query(
+                    "SELECT  epcatu.id AS id, epcatu.name AS category, SUM(expenses.amount) AS amount
+                    FROM expenses
+                    INNER JOIN expenses_category_assigned_to_users ecatu
+                    ON expenses.expense_category_assigned_to_user_id = ecatu.id
+                    INNER JOIN expenses_parent_category_assigned_to_users epcatu
+                    ON ecatu.parent_category_id = epcatu.id
+                    WHERE expenses.user_id = $loggedUserId
+                    AND date_of_expense >= '$balaceDateFrom'
+                    AND date_of_expense <= '$balaceDateTo'
+                    GROUP BY ecatu.parent_category_id
+                    ORDER BY SUM(expenses.amount) DESC;");
+    $incomesArray = $queryIncoms->fetchAll();
+    $expensesArray = $queryExpens->fetchAll();
+    $columnsQuantity = sizeof($expensesArray[0])/2;
+    $counter = 1;
+    $expenses = new Expenses($this->db);
+    $sum = $expenses->sumExpenses($balaceDateFrom,$balaceDateTo);
+    $subCategory;
+    foreach ($expensesArray as $expensRow) {
+      echo "<tr id=\"$expensRow[0]\"><td>$counter</td>";
+      $counter++;
+      for ($i = 1; $i < 3; $i++) {
+          echo "<td>";
+          echo $expensRow[$i];
+          echo "</td>";
+      }
+      echo "<td><button class=\"btn btn-xs btn-primary extend\"><span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span></button></td>";
+      echo "</tr>";
+      if($subCategory = $this->showSubCategory($expensRow[0],$balaceDateFrom, $balaceDateTo)){
+        echo "<tr style='display:none'><td colspan=\"4\">";
+        echo $subCategory;
+        echo "</td></tr>";
+      }
+
+    }
+    echo "<tr><td colspan=\"2\">Suma</td><th>$sum</th><td></td></tr>";
+    $_SESSION['selected-date-from'] = $balaceDateFrom;
+    $_SESSION['selected-date-to'] = $balaceDateTo;
+    return array($incomesArray, $expensesArray);
   }
 
   public function showSubCategory($parentCategoryId, $balaceDateFrom, $balaceDateTo){

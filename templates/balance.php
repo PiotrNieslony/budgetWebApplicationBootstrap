@@ -7,45 +7,45 @@
   <div class="
     col-lg-3 col-lg-push-9
     col-md-3 col-md-push-9">
-                    <form method="post">
-                        <select id="date-scope" class="select-date form-control" name="date-scope">
-                            <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąc</option>
-                            <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąc</option>
-                            <option value="custom">Niestandardowy</option>
-                            <?= (isset($_SESSION['custom'])) ? "<option selected >".$_SESSION['selected-date-from']." - ".$_SESSION['selected-date-to']."</option>" : ""; unset($_SESSION['custom'], $_SESSION['selected-date-from'], $_SESSION['selected-date-to']);?>
-                        </select>
-                    </form>
-                    <div class="modal fade" id="dateModal" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <form id="dateModalForm" method="post">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">Wybierz zakres dat</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                            <div class="form-group">
-                                                <strong>Data od</strong>
-                                                <input name="dateFrom" class="date date-from form-control" type="text" placeholder="RRRR-MM-DD" required
-                                                       pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
-                                                       title="Wpisz datę w formacie YYYY-MM-DD"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <strong>Data do</strong>
-                                                <input name="dateTo" class="date date-to form-control" type="text" placeholder="RRRR-MM-DD" required
-                                                       pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
-                                                       title="Wpisz datę w formacie YYYY-MM-DD"/>
-                                            </div>
+      <form method="post">
+          <select id="date-scope" class="select-date form-control" name="date-scope">
+              <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąc</option>
+              <option value="previous-month" <?= (isset($_SESSION['previous-month'])) ? "selected" : ""; unset($_SESSION['previous-month']);?> >Poprzedni miesiąc</option>
+              <option value="custom">Niestandardowy</option>
+              <?= (isset($_SESSION['custom'])) ? "<option selected >".$_SESSION['selected-date-from']." - ".$_SESSION['selected-date-to']."</option>" : ""; unset($_SESSION['custom'], $_SESSION['selected-date-from'], $_SESSION['selected-date-to']);?>
+          </select>
+      </form>
+      <div class="modal fade" id="dateModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <form id="dateModalForm" method="post">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <h4 class="modal-title">Wybierz zakres dat</h4>
+                      </div>
+                      <div class="modal-body">
+                              <div class="form-group">
+                                  <strong>Data od</strong>
+                                  <input name="dateFrom" class="date date-from form-control" type="text" placeholder="RRRR-MM-DD" required
+                                         pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
+                                         title="Wpisz datę w formacie YYYY-MM-DD"/>
+                              </div>
+                              <div class="form-group">
+                                  <strong>Data do</strong>
+                                  <input name="dateTo" class="date date-to form-control" type="text" placeholder="RRRR-MM-DD" required
+                                         pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))"
+                                         title="Wpisz datę w formacie YYYY-MM-DD"/>
+                              </div>
 
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                                        <button type="submit" class="btn btn-primary">OK</button>
-                                    </div>
-                                </form>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                          <button type="submit" class="btn btn-primary">OK</button>
+                      </div>
+                  </form>
+              </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
   </div>
   <div class="
     col-lg-3 col-lg-pull-3
@@ -144,22 +144,22 @@
           </tr>
         </thead>
         <tbody>
-          <?php $budget->showBalance();?>
+          <?php $balance = $budget->showExpenses();?>
         </tbody>
       </table>
     </div>
   </div>
 </div>
-<?php include "editExpenseModal.php" ?>
+<?php include "modal-window/editExpenseModal.php" ?>
+<?php include "modal-window/deleteExpenseModal.php" ?>
+<script>
+    //incomes data
+    var incomesArray = [['Category', 'Amount']];
+    incomesArray.push(<?php foreach($balance[0] as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
 
-  <script>
-      //incomes data
-      var incomesArray = [['Category', 'Amount']];
-      incomesArray.push(<?php foreach($balance[0] as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
-
-      console.log(incomesArray);
-      //expenses data
-      var expensesArray = [['Category', 'Amount']];
-      expensesArray.push(<?php foreach($balance[1] as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?>);
-  </script>
+    console.log(incomesArray);
+    //expenses data
+    var expensesArray = [['Category', 'Amount']];
+    expensesArray.push(<?php foreach($balance[1] as $expens){echo "[\"$expens[1]\", $expens[2]],";} ?>);
+</script>
 <script src="js/balance.js"	></script>
