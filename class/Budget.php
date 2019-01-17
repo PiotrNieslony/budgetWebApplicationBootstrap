@@ -194,6 +194,11 @@ class Budget {
     return $expenses->add();
   }
 
+  public function editExpense(){
+    $expenses = new Expenses($this->db);
+    return $expenses->edit();
+  }
+
   public function showExpensPaymentMethod() {
     $paymentMethodQuery = $this->db->prepare('SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id');
     $paymentMethodQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
@@ -322,11 +327,13 @@ class Budget {
                     AND date_of_income <= '$balaceDateTo'
                     GROUP BY incomes.income_category_assigned_to_user_id
                     ORDER BY SUM(incomes.amount) DESC;");
-    $queryExpens = $this->db->query("SELECT  ecatu.parent_category_id AS id , ecatu.parent_category_name  AS category, SUM(expenses.amount) AS amount
+    $queryExpens = $this->db->query(
+                    "SELECT  ecatu.id AS id, epcatu.name AS category, SUM(expenses.amount) AS amount
                     FROM expenses
-                    INNER JOIN
-                    expenses_category_assigned_to_users ecatu
+                    INNER JOIN expenses_category_assigned_to_users ecatu
                     ON expenses.expense_category_assigned_to_user_id = ecatu.id
+                    INNER JOIN expenses_parent_category_assigned_to_users epcatu
+                    ON ecatu.parent_category_id = epcatu.id
                     WHERE expenses.user_id = $loggedUserId
                     AND date_of_expense >= '$balaceDateFrom'
                     AND date_of_expense <= '$balaceDateTo'
@@ -364,23 +371,25 @@ class Budget {
   public function showSubCategory($parentCategoryId, $balaceDateFrom, $balaceDateTo){
     $loggedUserId = $_SESSION['loggedUser']['id'];
     $queryExpens = $this->db->query("SELECT  ecatu.id AS id , ecatu.name AS category, SUM(expenses.amount) AS amount
-                    FROM expenses
-                    INNER JOIN
-                    expenses_category_assigned_to_users ecatu
-                    ON expenses.expense_category_assigned_to_user_id = ecatu.id
-                    WHERE expenses.user_id = $loggedUserId
-                    AND ecatu.parent_category_id = '$parentCategoryId'
-                    AND date_of_expense >= '$balaceDateFrom'
-                    AND date_of_expense <= '$balaceDateTo'
-                    GROUP BY expenses.expense_category_assigned_to_user_id
-                    ORDER BY SUM(expenses.amount) DESC;");
+                                    FROM expenses
+                                    INNER JOIN
+                                    expenses_category_assigned_to_users ecatu
+                                    ON expenses.expense_category_assigned_to_user_id = ecatu.id
+                                    WHERE expenses.user_id = $loggedUserId
+                                    AND ecatu.parent_category_id = '$parentCategoryId'
+                                    AND date_of_expense >= '$balaceDateFrom'
+                                    AND date_of_expense <= '$balaceDateTo'
+                                    GROUP BY expenses.expense_category_assigned_to_user_id
+                                    ORDER BY SUM(expenses.amount) DESC;");
     $rowco =$queryExpens->rowCount();
     if ($queryExpens->rowCount() == 0) return false;
     $expenses = $queryExpens->fetchAll();
     $counter = 1;
     $sum = 0;
     $subTable = "";
-    $subTable .= "<table class=\"table table-bordered table-striped table-hover sub-category-table\"><tbody>";
+    $subTable .= "<table class=\"table table-striped table-bordered table-hover sub-category-table\">";
+    $subTable .= "<thead><tr><th>l.p.</th><th>Pod kategoria</th><th>Wartość</th><th></th></thead>";
+    $subTable .= "<tbody>";
     foreach ($expenses as $expensRow) {
       if($expensRow[0] == $parentCategoryId) $expensRow[1] = "inne";
       $subTable .=  "<tr id=\"$expensRow[0]\"><td>$counter</td>";
@@ -391,16 +400,16 @@ class Budget {
           $subTable .=  "</td>";
           $sum += $expensRow[2];
       }
-      $subTable .= "<td><button class=\"btn btn-xs btn-primary extend\"><span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span></button></td>";
+      $subTable .= "<td><button class=\"btn btn-xs btn-info extend\"><span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span></button></td>";
       $subTable .=  "</tr>";
       if($subCategory = $this->showExpensesItemsAssignedToCategory($expensRow[0], $balaceDateFrom, $balaceDateTo)){
         $subTable .= "<tr style='display:none'><td colspan=\"4\">";
         $subTable .= $subCategory;
-        $subTable .= "</td><tr>";
+        $subTable .= "</td></tr>";
 
       }
     }
-    $subTable .= "</table></tbody>";
+    $subTable .= "</tbody></table>";
     return $subTable;
   }
 
@@ -420,8 +429,9 @@ class Budget {
     $expenses = $queryExpens->fetchAll();
     $counter = 1;
     $subTable = "";
-    $subTable .= "<table class=\"table table-bordered table-striped table-hover sub-category-table\"><tbody>";
-    $subTable .= "<tr><th>l.p.</th><th>data</th><th>sposób płatności</th><th>kwota</th><th class=\"visible-sm visible-md visible-lg\">Komentarz</th><th></th></tr>";
+    $subTable .= "<table class=\"table table-bordered table-striped table-hover sub-category-table\">";
+    $subTable .= "<thead><tr><th>l.p.</th><th>data</th><th>sposób płatności</th><th>kwota</th><th class=\"visible-sm visible-md visible-lg\">Komentarz</th><th></th></tr></thead>";
+    $subTable .= "<tbody>";
     $counter = 0;
     foreach ($expenses as $expensRow) {
       $counter++;
@@ -432,11 +442,14 @@ class Budget {
           $subTable .=  $expensRow[$i];
           $subTable .=  "</td>";
       }
-      $subTable .= "<td><button class=\"btn btn-xs btn-primary edit\"><span class=\"glyphicon glyphicon glyphicon-edit
-\" aria-hidden=\"true\"></span></button></td>";
+      $subTable .= "<td>
+      <button class=\"btn btn-xs btn-danger delete\"><span class=\"glyphicon glyphicon glyphicon glyphicon-trash
+\" aria-hidden=\"true\"></span></button>
+      <button class=\"btn btn-xs btn-primary edit\"><span class=\"glyphicon glyphicon glyphicon-edit
+      \" aria-hidden=\"true\"></span></button></td>";
       $subTable .=  "</tr>";
     }
-    $subTable .= "</table></tbody>";
+    $subTable .= "</tbody></table>";
     return $subTable;
   }
 
@@ -447,7 +460,6 @@ class Budget {
   public function parsePath(){
     if (isset($_SERVER['REQUEST_URI'])) {
       $request_path = explode('?', $_SERVER['REQUEST_URI']);
-
       $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '\/');
       $pathCallUtf8 = substr(urldecode($request_path[0]), strlen($base) + 1);
       $pathCall = utf8_decode($pathCallUtf8);

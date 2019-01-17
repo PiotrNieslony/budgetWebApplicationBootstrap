@@ -61,6 +61,9 @@ th {
   // Nesting
   .table {
     background-color: darken($table-bg-accent, 20%);
+    .table{
+          background-color: $table-third-nestet-bg;
+      }
   }
 }
 
@@ -111,12 +114,21 @@ th {
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
 .table{
   &.table-striped {
-    > tbody > tr:nth-of-type(odd) {
-      background-color: $table-bg-accent;
+    > tbody > tr:nth-child(4n+1) {
+      background-color: darken($table-bg, 3%);
     }
-    .table{
-      > tbody > tr:nth-of-type(odd) {
-        background-color: darken($table-bg-accent, 25%);
+  }
+  .table{
+    &.table-striped {
+      > tbody > tr:nth-child(4n+1) {
+        background-color: lighten($brand-primary, 50%);
+      }
+    }
+      .table{
+      &.table-striped {
+        > tbody > tr:nth-child(odd) {
+          background-color: lighten($table-third-nestet-bg, 15%);
+        }
       }
     }
   }
@@ -134,6 +146,11 @@ th {
     .table {
       > tbody > tr:hover {
         background-color: darken($table-bg-accent, 35%);
+        .table {
+          > tbody > tr:hover {
+            background-color: darken($table-third-nestet-bg, 10%);
+          }
+        }
       }
     }
   }

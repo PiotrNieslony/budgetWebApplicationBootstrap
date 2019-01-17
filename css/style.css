@@ -333,6 +333,12 @@ body {
   .table thead {
     background-color: #398182;
     color: white; }
+  .table .table thead {
+    background-color: #224c4d;
+    color: white; }
+  .table .table .table thead {
+    background-color: #df8a13;
+    color: white; }
 
 .expeses-table2 tr {
   cursor: pointer; }
@@ -340,15 +346,15 @@ body {
 .table tr td:last-child {
   text-align: right; }
 
-.table .extended span {
+.table tr.active > td > button > span {
   transform: rotate(180deg); }
 
 .sub-category-table {
   border-bottom: none;
   margin-left: 2%;
   margin-bottom: 0;
-  width: 98%;
-  color: black; }
+  width: 99%;
+  color: #122929; }
 
 /*** ADAPTIV STYLE ***/
 @media only screen and (max-width: 992px) {

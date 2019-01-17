@@ -133,7 +133,7 @@
     col-lg-9 col-lg-pull-3
     col-md-7 col-md-pull-5">
     <div class="budget-table expeses-table2">
-      <table class="table table-bordered table-striped table-hover">
+      <table class="table table-striped table-bordered table-hover">
         <caption>Tabela wydatków</caption>
         <thead>
           <tr>
@@ -144,9 +144,7 @@
           </tr>
         </thead>
         <tbody>
-          <?php $budget->showBalance();
-            echo "<br>kolejna tab<br>";
-          ?>
+          <?php $budget->showBalance();?>
         </tbody>
       </table>
     </div>
