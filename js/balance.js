@@ -8,27 +8,102 @@ function sumOfItem(partOfBudget){
 }
 
 //tables buttons
-$('.table tr td .extend').click(function(){
-  $(this).toggleClass('extended');
-  $(this).closest('tr').next('tr').toggle(300);
+$('body').on('click', '.table tr td .extend',function(){
+  if($(this).closest('tr').hasClass("active")){
+    $(this).removeClass('extended');
+    $(this).closest('tr').next('tr').hide(300);
+    $(this).closest('tr').removeClass('active');
+    $(this).closest('tr').next('tr').find(".active").next('tr').hide(300);
+    $(this).closest('tr').next('tr').find(".active").removeClass('active');
+
+  } else {
+    $(this).closest('tr').next('tr').show(300);
+    var handle = $(this).closest('tr')
+    handle.addClass("active");
+    handle.siblings('.active').next('tr').hide(300);
+    handle.siblings('.active').removeClass('active');
+    $(this).closest('tr').next('tr').find(".active").next('tr').hide(300);
+    $(this).closest('tr').next('tr').find(".active").removeClass('active');
+  }
 })
 
-$('.table tr td .edit').click(function(){
+//fills in the form fields in modal edit
+$('body').on('click','.table tr td .edit', function(){
+  $(".editExpenseModal .success-content").hide();
+  $(".editExpenseModal .proper-content").show();
+  $(".editExpenseModal .alert.alert-danger").hide();
   var obtainedValues =[];
   var counter = 0;
   $(this).closest('tr').find('td').each(function(index, element){
-  if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
-  else obtainedValues.push($( this ).text());
-  counter ++
+    if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 5) obtainedValues.push(
+      $( this ).closest('table').closest('tr').prev().attr('id')
+    );
+    else obtainedValues.push($( this ).text());
+    counter ++;
   });
   console.log(obtainedValues);
-  $('.editModal').modal()
+  $('.editExpenseModal').modal();
+  $('.editExpenseModal').attr('id', obtainedValues[0] );
   $("input[name='expenseAmount']").val(obtainedValues[3]);
   $("input[name='expenseDate']").val(obtainedValues[1]);
-  $("input[name='paymentType']:contains('"+obtainedValues[2]+"')").prop('selected', true);
-  $("input[name='categorys']:contains('"+obtainedValues[2]+"')").prop('selected', true);
+  $("select[name='paymentType'] option:contains('"+obtainedValues[2]+"')").prop('selected', true);
+  $('input[value=' + obtainedValues[5] + ']').prop('checked', true);
+  $(".subCategory").hide();
+  $('input[value=' + obtainedValues[5] + ']').closest(".subCategory").show(0, function(){
+      $(this).prev().addClass("active");
+  });
+  $("input[name='expenseComment']").val(obtainedValues[4]);
 })
 
+// send edited expense to db
+$(".editExpenseModal button[type='submit']").click(function(){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=edit-expense-modal",
+    data: {
+      expenseID:        $('.editExpenseModal').attr('id'),
+      expenseAmount:    $("input[name='expenseAmount']").val(),
+      expenseDate:      $("input[name='expenseDate']").val(),
+      paymentType:      $("select[name='paymentType'] option:selected").val(),
+      categorys:        $("input[name='categorys']:checked").val(),
+      expenseComment:   $("input[name='expenseComment']").val()
+
+    },
+    dataType: "json",
+    cache: false,
+    success: function(data){
+      $(".editExpenseModal .alert.alert-danger").hide();
+      for(key in data){
+        $("." + key).text(data[key]);
+        $("." + key).show(200);
+        console.log(data[key]);
+        loadExpenses();
+        $(".editExpenseModal .success-content").show();
+        $(".editExpenseModal .proper-content").hide();
+      }
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+});
+
+//LOAD EXPENSES
+function loadExpenses(){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=load-expenses",
+    dataType: "html",
+    cache: false,
+    success: function(data){
+      $(".expeses-table2 tbody").html(data);
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+}
 //////// generate table ////////
 function generateTable(incomesArray){
     var insomesHTML = "";

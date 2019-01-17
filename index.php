@@ -8,9 +8,11 @@ $budget = new Budget($config['host'],$config['user'], $config['pass'],$config['d
 
 $action = 'start';
 if($budget->parsePath()) $action = $budget->parsePath();
+if(isset($_GET["action"]))$action =$_GET["action"];
 if(!isset($_SESSION['loggedUser'])
 && $action != 'rejestracja'
 && $action != 'potwierdzenie-rejestracji'
+&& $action != 'edit-expense-modal'
 && $action != 'start') $action = 'zaloguj';
 if(isset($_POST['inputLogin']) && isset($_POST['inputPassword'])) $action = 'zaloguj';
 
@@ -35,6 +37,12 @@ switch($action):
     break;
   case 'start';
     include 'templates/startpage.php';
+    break;
+  case 'edit-expense-modal';
+    $budget->editExpense();
+    break;
+  case 'load-expenses';
+    echo $budget->showBalance();
     break;
   default;
     include 'templates/mainTemplate.php';
