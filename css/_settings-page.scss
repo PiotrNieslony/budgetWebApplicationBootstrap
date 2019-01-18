@@ -1,0 +1,19 @@
+.settings{
+  label > {
+    button{
+      float: right;
+      margin-left: 5px;
+    }
+  }
+  .row{
+    button{
+      margin-top: 10px;
+    }
+  }
+  .panel{
+      a[data-parent="#accordion"]{
+        width: 100%;
+        display: block;
+      }
+  }
+}

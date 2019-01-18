@@ -43,8 +43,7 @@
 			            case 'przegladaj-bilans':
 			              include 'templates/balance.php';
 			              break;
-			            case 'showSettigns' :
-			              $news = $portal->getNews();
+			            case 'ustawienia' :
 			              include 'templates/settings.php';
 			              break;
 			          endswitch;

@@ -18,13 +18,18 @@ class Budget {
     }
   }
 
-  public function getActualUser() {
+  public function getActualUserId() {
     if(isset($_SESSION['loggedUser'])){
-      $_SESSION['loggedUser'];
+      return $_SESSION['loggedUser']['id'];
     }
     else{
-      return null;
+      return false;
     }
+  }
+
+  public function getEmailAdress(){
+    $userId = $this->getActualUserId();
+    return $query = $this->db->getSingleValue("SELECT email FROM users WHERE id = $userId");
   }
 
   public function login(){
@@ -183,12 +188,12 @@ class Budget {
     return $incomes->delete();
   }
 
-  public function showIncomsCategory() {
+  public function showIncomsCategory($where) {
     $categoryQuery = $this->db->prepare('SELECT id, parent_category_id, name FROM incomes_category_assigned_to_users WHERE user_id = :user_id');
     $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
     $categoryQuery->execute();
     $categorys = $categoryQuery->fetchAll();
-    $this->generateCategoryHtml($categorys);
+    $this->generateCategoryHtml($categorys, $where);
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
     unset($_SESSION['e_categorys']);
   }
@@ -208,23 +213,37 @@ class Budget {
     return $expenses->delete();
   }
 
-  public function generateCategoryHtml($categoryArray){
+  function generateCategoryHtml($categoryArray, $where){
     foreach($categoryArray as $category){
       if($category[1] == $category[0]){
         echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
                 <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
-                <span class='checkmark'></span>
-                </label>
-            </div>
+                <span class='checkmark'></span>";
+        if($where == 'settings')
+          echo "<button class=\"btn btn-xs btn-danger delete\">
+                  <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
+                </button>
+                <button class=\"btn btn-xs btn-primary edit\">
+                  <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
+                </button>";
+        echo    "</label>
+              </div>
             <div class=\"subCategory\">";
-
+        if($where == 'addCategory') continue;
         foreach($categoryArray as $subCategory)
             if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
               echo "<div class=\"radio\" id=\"expenseCategory\">
                       <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
-                      <span class='checkmark'></span>
-                      </label>
-                  </div>";
+                      <span class='checkmark'></span>";
+              if($where == 'settings')
+                echo "<button class=\"btn btn-xs btn-danger delete\">
+                        <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
+                      </button>
+                      <button class=\"btn btn-xs btn-primary edit\">
+                        <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
+                      </button>";
+              echo    "</label>
+                   </div>";
             }
         echo "</div>";
       }
@@ -241,12 +260,12 @@ class Budget {
     }
   }
 
-  public function showExpensCategory() {
+  public function showExpensCategory($where) {
     $categoryQuery = $this->db->prepare('SELECT id, parent_category_id ,name FROM expenses_category_assigned_to_users WHERE user_id = :user_id');
     $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
     $categoryQuery->execute();
     $categorys = $categoryQuery->fetchAll();
-    $this->generateCategoryHtml($categorys);
+    $this->generateCategoryHtml($categorys, $where);
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
     unset($_SESSION['e_categorys']);
   }

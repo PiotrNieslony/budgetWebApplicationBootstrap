@@ -55,6 +55,15 @@
   background: white; }
 
 /* Style the indicator (dot/circle) */
+.settings label > button {
+  float: right;
+  margin-left: 5px; }
+.settings .row button {
+  margin-top: 10px; }
+.settings .panel a[data-parent="#accordion"] {
+  width: 100%;
+  display: block; }
+
 body {
   background: url("../img/intersection.png") #efefef;
   background-attachment: fixed;

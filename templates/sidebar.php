@@ -10,7 +10,7 @@
                 <li><a href="dodaj-przychod">Dodaj przychód</a></li>
                 <li><a href="dodaj-wydatek">Dodaj wydatek</a></li>
                 <li><a href="przegladaj-bilans">Przeglądaj bilans</a></li>
-                <li><a href="#">Ustawienia</a></li>
+                <li><a href="ustawienia">Ustawienia</a></li>
                 <li><a href="wyloguj">Wyloguj</a></li>
             </ul>
         </div>
