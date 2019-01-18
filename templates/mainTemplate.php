@@ -41,7 +41,6 @@
 			              include 'templates/addExpense.php';
 			              break;
 			            case 'przegladaj-bilans':
-										$balance = $budget->balance();
 			              include 'templates/balance.php';
 			              break;
 			            case 'showSettigns' :

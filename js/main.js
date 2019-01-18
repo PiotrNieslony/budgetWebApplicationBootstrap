@@ -85,9 +85,10 @@ $(function() {
         dateFormat:"yy-mm-dd",
         minDate: new Date(2001, 1 - 1, 1),
         maxDate: "m",
+        firstDay: 1,
         monthNames: [ "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" ],
-        dayNames: [ "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela" ],
-        dayNamesMin: [ "Pn", "Wt", "Śr", "Cz", "Pt", "So", "Sn" ],
+        dayNames: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota" ],
+        dayNamesMin: ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "So" ],
     });
 });
 
@@ -100,6 +101,10 @@ $(".mainCategory").click(function(){
     });
     $(this).next(".subCategory").show(200, function(){
         handle.addClass("active");
+    });
+  } else {
+    $(".mainCategory.active").next(".subCategory").hide(200, function(){
+      $(".mainCategory.active").removeClass("active");
     });
   }
 })

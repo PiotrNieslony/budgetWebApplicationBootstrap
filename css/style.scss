@@ -1,5 +1,6 @@
-$primary-color: #398182;
-$background-color: #efefef;
+$primary-color:         #398182;
+$background-color:       #efefef;
+$table-third-nestet-bg:  #f0ad4e !default;
 @import "../bootstrap/bootstrap/mixins/gradients";
 @import "radio-button";
 
@@ -337,8 +338,39 @@ body {
   thead {
     background-color: $primary-color;
     color: white;
-  }
+    }
+  .table {
+    thead {
+      background-color: darken($primary-color,15%);
+      color: white;
+      }
+      .table {
+        thead {
+          background-color: darken($table-third-nestet-bg,15%);
+          color: white;
+          }
+        }
+    }
   border-bottom: 4px solid $primary-color;
+}
+
+.expeses-table2 tr{
+  cursor: pointer;
+}
+
+.table tr td:last-child{
+  text-align: right;
+}
+.table tr.active > td > button > span{
+  transform: rotate(180deg);
+}
+
+.sub-category-table {
+  border-bottom: none;
+  margin-left:2%;
+  margin-bottom:0;
+  width:99%;
+  color:darken($primary-color,25%);
 }
 
 /*** ADAPTIV STYLE ***/

@@ -51,8 +51,7 @@
 				<h2 class="text-center">O aplikacji</h2>
 				<div class="col-lg-12">
 					<p class="lead">
-						Aplikacja YourBudget wspomogą zarządzanie budżetem osobistym. Umożliwia wprowadzanie kosztów  i przychodów przypisanych do kategorii. Dzięki czemu będziesz w stanie na bieżąco śledzić stan swoich finansów. Wprowadzone prze Ciebie kwoty będą przedstawione w tabeli i na czytelnych wykresach. Będziesz mógł łatwo określić na co wydajesz najwięcej środków i zaplanować oszczędzanie.
-					</p>
+						Aplikacja YourBudget służy do zarządzania budżetem osobistym. Umożliwia wprowadzanie wydatków i przychodów, oraz przypisywanie ich do kategorii tworzonych i modyfikowanych według własnych potrzeb.  Wprowadzone przez Ciebie kwoty będą przedstawione w tabeli oraz na czytelnych wykresach.   Dzięki temu będziesz w stanie na bieżąco śledzić stan swoich finansów.  Będziesz mógł łatwo określić, na co wydajesz najwięcej środków i zaplanować oszczędzanie. 
 				</div>
 			</div>
 		</div>
