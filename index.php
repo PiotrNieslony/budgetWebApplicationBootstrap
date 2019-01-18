@@ -8,6 +8,7 @@ $budget = new Budget($config['host'],$config['user'], $config['pass'],$config['d
 
 $action = 'start';
 if($budget->parsePath()) $action = $budget->parsePath();
+if(isset($_GET["action"]))$action =$_GET["action"];
 if(!isset($_SESSION['loggedUser'])
 && $action != 'rejestracja'
 && $action != 'potwierdzenie-rejestracji'
@@ -35,6 +36,24 @@ switch($action):
     break;
   case 'start';
     include 'templates/startpage.php';
+    break;
+  case 'edit-income-modal';
+    $budget->editIncome();
+    break;
+  case 'delete-income-modal';
+    $budget->deleteIncome();
+    break;
+  case 'edit-expense-modal';
+    $budget->editExpense();
+    break;
+  case 'delete-expense-modal';
+    $budget->deleteExpense();
+    break;
+  case 'load-incomes';
+    echo $budget->showIncomes();
+    break;
+  case 'load-expenses';
+    echo $budget->showExpenses();
     break;
   default;
     include 'templates/mainTemplate.php';

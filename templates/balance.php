@@ -1,12 +1,15 @@
-<?php if(!isset($budget)) die();?>
+<?php if(!isset($budget)) die();
+$budget->setBalanceDateToSession();
+?>
 <header>
   <h1>Bilans </h1>
-                <h4>Za okres<?= "od ".$_SESSION['selected-date-from']." do ".$_SESSION['selected-date-to'] ?></h4>
+  <h4>Za okres<?= "od ".$_SESSION['selected-date-from']." do ".$_SESSION['selected-date-to'] ?></h4>
 </header>
 <div class="row">
   <div class="
     col-lg-3 col-lg-push-9
     col-md-3 col-md-push-9">
+<<<<<<< HEAD
                     <form method="post">
                         <select id="date-scope" class="select-date form-control" name="date-scope">
                             <option value="current-month" <?= (isset($_SESSION['current-month'])) ? "selected" : "" ; unset($_SESSION['current-month']);?> >Bieżący miesiąc</option>
@@ -46,6 +49,17 @@
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal-dialog -->
                     </div><!-- /.modal -->
+=======
+      <form method="post">
+          <select id="date-scope" class="select-date form-control" name="date-scope">
+              <option value="current-month" <?php echo (isset($_SESSION['selected-date'] ) && $_SESSION['selected-date'] == 'current-month') ? "selected" : "" ;?> >Bieżący miesiąc</option>
+              <option value="previous-month" <?php echo (isset($_SESSION['selected-date'] ) &&  $_SESSION['selected-date'] == 'previous-month') ? "selected" : "";?> >Poprzedni miesiąc</option>
+              <option value="custom">Niestandardowy</option>
+              <?php echo (isset($_SESSION['selected-date']) &&  $_SESSION['selected-date']  == 'custom') ? "<option selected >".$_SESSION['selected-date-from']." - ".$_SESSION['selected-date-to']."</option>" : ""; unset($_SESSION['selected-date-from'], $_SESSION['selected-date-to']);?>
+          </select>
+
+      </form>
+>>>>>>> balance
   </div>
   <div class="
     col-lg-3 col-lg-pull-3
@@ -77,7 +91,7 @@
     <div class="
       col-lg-9 col-lg-pull-3
       col-md-7 col-md-pull-5">
-      <div class="budget-table incomes-table">
+      <div class="budget-table incomes-table2">
         <table class="table table-bordered table-striped table-hover">
           <caption>Tabela przychodów</caption>
           <thead>
@@ -85,34 +99,11 @@
               <th>l.p.</th>
               <th>Kategoria</th>
               <th>Wartość</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Wynagrodzenie</td>
-              <td>5000</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Odsetki bankowe</td>
-              <td>90</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sprzedaż na allegro</td>
-              <td>300</td>
-
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Inne</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td colspan="2">Suma</td>
-              <td>5390</td>
-            </tr>
+            <?php $incomes = $budget->showIncomes();?>
           </tbody>
         </table>
       </div>
@@ -132,45 +123,42 @@
   <div class="
     col-lg-9 col-lg-pull-3
     col-md-7 col-md-pull-5">
-    <div class="budget-table expeses-table">
-      <table class="table table-bordered table-striped table-hover">
+    <div class="budget-table expeses-table2">
+      <table class="table table-striped table-bordered table-hover">
         <caption>Tabela wydatków</caption>
         <thead>
           <tr>
             <th>l.p.</th>
             <th>Kategoria</th>
             <th>Wartość</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mieszkanie</td>
-            <td>1600</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jedzenie</td>
-            <td>1050</td>
-          </tr>
-          <tr>
-            <td colspan="2">Suma</td>
-            <td>00</td>
-          </tr>
+          <?php $expenses = $budget->showExpenses();?>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+<<<<<<< HEAD
+=======
+<?php
+include "modal-window/dateModal.php";
+include "modal-window/editExpenseModal.php";
+include "modal-window/deleteExpenseModal.php";
+include "modal-window/editIncomeModal.php";
+include "modal-window/deleteIncomeModal.php";
+?>
+<script>
+    //incomes data
+    var incomesArray = [['Category', 'Amount']];
+    incomesArray.push(<?php foreach($incomes as $income){echo "[\"$income[1]\", $income[2]],";} ?>);
+>>>>>>> balance
 
-  <script>
-      //incomes data
-      var incomesArray = [['Category', 'Amount']];
-      incomesArray.push(<?php foreach($balance[0] as $income){echo "[\"$income[0]\", $income[1]],";} ?>);
-
-      console.log(incomesArray);
-      //expenses data
-      var expensesArray = [['Category', 'Amount']];
-      expensesArray.push(<?php foreach($balance[1] as $expens){echo "[\"$expens[0]\", $expens[1]],";} ?>);
-  </script>
+    console.log(incomesArray);
+    //expenses data
+    var expensesArray = [['Category', 'Amount']];
+    expensesArray.push(<?php foreach($expenses as $expens){echo "[\"$expens[1]\", $expens[2]],";} ?>);
+</script>
 <script src="js/balance.js"	></script>
