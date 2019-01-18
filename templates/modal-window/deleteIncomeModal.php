@@ -1,5 +1,5 @@
 <?php if(!isset($budget)) die();?>
-<div class="modal fade deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade deleteIncomeModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">

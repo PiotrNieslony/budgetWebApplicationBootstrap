@@ -5,11 +5,11 @@
 <div>
   <form role="form .form-horizontal" method="post">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <?= (isset($_SESSION['success'])) ? "<p class=\"alert alert-success\">".$_SESSION['success']."</p>" : "";
         unset($_SESSION['success']); ?>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Kwota</strong>
               <input name="incomeAmount" class="form-control" type="number" step="0.01"/>
@@ -17,7 +17,7 @@
               unset($_SESSION['e_incomeAmount']); ?>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Data</strong>
               <input  name="incomeDate" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
@@ -37,16 +37,16 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <strong>Komentarz:</strong>
             <input name="incomeComment" type="text" class="form-control" />
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <button type="submit" class="btn btn-primary btn-block ">Dodaj</button>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <button type="button" class="btn btn-warning btn-block ">Anuluj</button>
           </div>
         </div>
