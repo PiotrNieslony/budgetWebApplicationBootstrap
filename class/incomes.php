@@ -258,7 +258,7 @@ class Incomes {
       $subTable .= "<td>
       <button class=\"btn btn-xs btn-danger delete\"><span class=\"glyphicon glyphicon glyphicon glyphicon-trash
       \" aria-hidden=\"true\"></span></button>
-            <button class=\"btn btn-xs btn-primary edit\"><span class=\"glyphicon glyphicon glyphicon-edit
+            <button class=\"btn btn-xs btn-primary edit\"><span class=\"glyphicon glyphicon-pencil
             \" aria-hidden=\"true\"></span></button></td>";
       $subTable .=  "</tr>";
     }

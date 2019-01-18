@@ -3,6 +3,7 @@ $background-color:       #efefef;
 $table-third-nestet-bg:  #f0ad4e !default;
 @import "../bootstrap/bootstrap/mixins/gradients";
 @import "radio-button";
+@import "settings-page";
 
 body {
   background: url("../img/intersection.png") $background-color;

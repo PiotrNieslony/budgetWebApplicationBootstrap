@@ -43,7 +43,7 @@
             <div class="form-group">
               <strong>Kategoria</strong>
               <?php
-                $budget->showExpensCategory();
+                $budget->showExpensCategory('show');
               ?>
             </div>
           </div>

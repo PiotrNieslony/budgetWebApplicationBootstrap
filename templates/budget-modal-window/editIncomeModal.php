@@ -33,7 +33,7 @@
             <div class="form-group">
               <strong>Kategoria</strong>
               <?php
-                $budget->showIncomsCategory();
+                $budget->showIncomsCategory('show');
               ?>
             </div>
           </div>
