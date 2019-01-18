@@ -5,7 +5,7 @@
 <div>
   <form role="form .form-horizontal" method="post">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <?= (isset($_SESSION['success'])) ? "<p class=\"alert alert-success\">".$_SESSION['success']."</p>" : "";
         unset($_SESSION['success']); ?>
         <div class="row">
@@ -55,10 +55,10 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <button type="submit" class="btn btn-primary btn-block ">Dodaj</button>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <button type="button" class="btn btn-warning btn-block ">Anuluj</button>
           </div>
         </div>

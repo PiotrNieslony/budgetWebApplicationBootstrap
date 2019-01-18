@@ -1,3 +1,3 @@
 <?php
-$output = array('ok'=>'ok');
-echo json_encode($output);
+echo "ok";
+ $budget->editIncome();

@@ -1,12 +1,3 @@
-function sumOfItem(partOfBudget){
-    var partOfBudgetLength = partOfBudget.length -1;
-    var sumOfIncomes = 0;
-    for(var i = 1; i <= partOfBudgetLength; i++) {
-        sumOfIncomes += partOfBudget[i][1];
-    }
-    return sumOfIncomes;
-}
-
 //tables buttons
 $('body').on('click', '.table tr td .extend',function(){
   if($(this).closest('tr').hasClass("active")){
@@ -27,8 +18,117 @@ $('body').on('click', '.table tr td .extend',function(){
   }
 })
 
+//EDIT INCOME MODAL
+$('body').on('click','.incomes-table2 .table tr td .edit', function(){
+  $(".editIncomeModal .success-content").hide();
+  $(".editIncomeModal .proper-content").show();
+  $(".editIncomeModal .alert.alert-danger").hide();
+  var obtainedValues =[];
+  var counter = 0;
+  $(this).closest('tr').find('td').each(function(index, element){
+    if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 4) obtainedValues.push(
+      $( this ).closest('table').closest('tr').prev().attr('id')
+    );
+    else obtainedValues.push($( this ).text());
+    counter ++;
+  });
+  //fills the form fields in modal edit
+  $('.editIncomeModal').modal();
+  $('.editIncomeModal').attr('id', obtainedValues[0] );
+  $("input[name='incomeAmount']").val(obtainedValues[2]);
+  $("input[name='incomeDate']").val(obtainedValues[1]);
+  $('input[value=' + obtainedValues[4] + ']').prop('checked', true);
+  $(".subCategory").hide();
+  $('input[value=' + obtainedValues[4] + ']').closest(".subCategory").show(0, function(){
+      $(this).prev().addClass("active");
+  });
+  $("input[name='incomeComment']").val(obtainedValues[3]);
+})
+
+// SEND EDITED INCOME MODAL TO DB
+$(".editIncomeModal button[type='submit']").click(function(){
+  var testArray = [$('.editIncomeModal').attr('id'), $("input[name='incomeAmount']").val(), $("input[name='incomeDate']").val(), $("input[name='categorys']:checked").val(), $("input[name='incomeComment']").val()];
+  console.log(testArray);
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=edit-income-modal",
+    data: {
+      incomeID:        $('.editIncomeModal').attr('id'),
+      incomeAmount:    $("input[name='incomeAmount']").val(),
+      incomeDate:      $("input[name='incomeDate']").val(),
+      categorys:        $("input[name='categorys']:checked").val(),
+      incomeComment:   $("input[name='incomeComment']").val()
+    },
+    dataType: "json",
+    cache: false,
+    success: function(data){
+      $(".editIncomeModal .alert.alert-danger").hide();
+      for(key in data){
+        $("." + key).text(data[key]);
+        $("." + key).show(200);
+        console.log(data[key]);
+      }
+      loadIncomes();
+      $(".editIncomeModal .success-content").show();
+      $(".editIncomeModal .proper-content").hide();
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+});
+
+//DELETE INCOME MODAL
+$('body').on('click','.incomes-table2 .table tr td .delete', function(){
+  $(".deleteIncomeModal .success-content").hide();
+  $(".deleteIncomeModal .proper-content").show();
+  $(".deleteIncomeModal .alert.alert-danger").hide();
+  var obtainedValues =[];
+  var counter = 0;
+  $(this).closest('tr').find('td').each(function(index, element){
+    if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 4) obtainedValues.push(
+      $( this ).closest('table').closest('tr').prev().find('td:nth-child(2)').text()
+    );
+    else obtainedValues.push($( this ).text());
+    counter ++;
+  });
+  console.log(obtainedValues);
+  $('.deleteIncomeModal').modal();
+  $('.deleteIncomeModal').attr('id', obtainedValues[0] );
+  //generate message
+  var message = "Czy na pewno chcesz usunąć wydatek z kategorii <b>"
+  + obtainedValues[4] + "</b>, na kwotę <b>"
+  + obtainedValues[2] + "</b>, z dnia <b>" + obtainedValues[1];
+  if (obtainedValues[3]) message = message + "</b>, opatrzony komentarzem <b>" + obtainedValues[3] +"</b>?";
+  else message = message +"</b>?";
+  $('.deleteIncomeModal .proper-content p').html(message);
+})
+
+// send delete comand Income to db
+$(".deleteIncomeModal button[type='submit']").click(function(){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=delete-income-modal",
+    data: {
+      incomeID:   $('.deleteIncomeModal').attr('id')
+    },
+    dataType: "json",
+    cache: false,
+    success: function(data){
+      loadIncomes();
+      $(".deleteIncomeModal .success-content").show();
+      $(".deleteIncomeModal .proper-content").hide();
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+});
+
 //EDIT EXPENSE MODAL
-$('body').on('click','.table tr td .edit', function(){
+$('body').on('click','.expeses-table2 .table tr td .edit', function(){
   $(".editExpenseModal .success-content").hide();
   $(".editExpenseModal .proper-content").show();
   $(".editExpenseModal .alert.alert-danger").hide();
@@ -42,7 +142,6 @@ $('body').on('click','.table tr td .edit', function(){
     else obtainedValues.push($( this ).text());
     counter ++;
   });
-  console.log(obtainedValues);
   //fills the form fields in modal edit
   $('.editExpenseModal').modal();
   $('.editExpenseModal').attr('id', obtainedValues[0] );
@@ -91,7 +190,7 @@ $(".editExpenseModal button[type='submit']").click(function(){
 });
 
 //DELETE EXPENSE MODAL
-$('body').on('click','.table tr td .delete', function(){
+$('body').on('click','.expeses-table2 .table tr td .delete', function(){
   $(".deleteExpenseModal .success-content").hide();
   $(".deleteExpenseModal .proper-content").show();
   $(".deleteExpenseModal .alert.alert-danger").hide();
@@ -105,7 +204,6 @@ $('body').on('click','.table tr td .delete', function(){
     else obtainedValues.push($( this ).text());
     counter ++;
   });
-  console.log(obtainedValues);
   $('.deleteExpenseModal').modal();
   $('.deleteExpenseModal').attr('id', obtainedValues[0] );
   //generate message
@@ -138,6 +236,21 @@ $(".deleteExpenseModal button[type='submit']").click(function(){
   });
 });
 
+//LOAD INCOMES
+function loadIncomes(){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=load-incomes",
+    dataType: "html",
+    cache: false,
+    success: function(data){
+      $(".incomes-table2 tbody").html(data);
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+}
 
 //LOAD EXPENSES
 function loadExpenses(){
@@ -155,33 +268,18 @@ function loadExpenses(){
   });
 }
 
-//////// generate table ////////
-function generateTable(incomesArray){
-    var insomesHTML = "";
-    var incomesArrayLength = incomesArray.length -1;
+//////// GENERATE MESSAGE ////////
+function sumOfItem(partOfBudget){
+    var partOfBudgetLength = partOfBudget.length -1;
     var sumOfIncomes = 0;
-    for(var i = 1; i <= incomesArrayLength; i++) {
-        var tablePart = "<tr>"+
-            "<td>" + i + "</td>"+
-            "<td>" + incomesArray[i][0] + "</td>"+
-            "<td>" + incomesArray[i][1] + "</td>"+
-            "</tr>";
-        sumOfIncomes += incomesArray[i][1];
-        insomesHTML = insomesHTML + tablePart;
+    for(var i = 1; i <= partOfBudgetLength; i++) {
+        sumOfIncomes += partOfBudget[i][1];
     }
-    sumOfIncomes = round(sumOfIncomes,2);
-    insomesHTML += '<tr>' +
-        '<td colspan="2">Suma</td>' +
-        '<th>' + sumOfIncomes +'</th>' +
-        '</tr>';
-    return insomesHTML;
+    return sumOfIncomes;
 }
 
 var sumOfIncomes = sumOfItem(incomesArray);
 var sumOfExpenses = sumOfItem(expensesArray);
-
-$('.incomes-table tbody').html(generateTable(incomesArray));
-$('.expeses-table tbody').html(generateTable(expensesArray));
 
 function round(value, precision) {
     var aPrecision = Math.pow(10, precision);
@@ -305,5 +403,5 @@ $( "#date-scope" ).on("change", function () {
 
 
 $('#dateModalForm').on('submit', function () {
-    $('#dateModalForm').trigger('submit', [ 'variable_name']);
+    $('#dateModalForm').trigger('submit');
 })
