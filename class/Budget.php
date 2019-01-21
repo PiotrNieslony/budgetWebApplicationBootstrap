@@ -213,23 +213,23 @@ class Budget {
     return $expenses->delete();
   }
 
-  function generateCategoryHtml($categoryArray, $where){
+  private function generateCategoryHtml($categoryArray, $where){
     foreach($categoryArray as $category){
       if($category[1] == $category[0]){
         echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
                 <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
                 <span class='checkmark'></span>";
         if($where == 'settings')
-          echo "<button class=\"btn btn-xs btn-danger delete\">
+        echo "<button class=\"btn btn-xs btn-danger delete\">
                   <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
                 </button>
                 <button class=\"btn btn-xs btn-primary edit\">
                   <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
                 </button>";
         echo    "</label>
-              </div>
-            <div class=\"subCategory\">";
-        if($where == 'addCategory') continue;
+              </div>";
+      if($where == 'addSubcategory') continue;
+        echo "<div class=\"subCategory\">";
         foreach($categoryArray as $subCategory)
             if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
               echo "<div class=\"radio\" id=\"expenseCategory\">
@@ -315,7 +315,25 @@ class Budget {
     return $expenses->showExpenses($balanceDate[0],$balanceDate[1]);
   }
 
+  public function addIncomeSubcategory(){
+    $incomes = new Incomes($this->db);
+    return $incomes->addIncomeSubcategory();
+  }
 
+  public function addIncomeCategory(){
+    $incomes = new Incomes($this->db);
+    return $incomes->addIncomeCategory();
+  }
+
+  public function addExpenseSubcategory(){
+    $expense = new Expenses($this->db);
+    return $expense->addExpenseSubcategory();
+  }
+
+  public function addExpenseCategory(){
+    $expense = new Expenses($this->db);
+    return $expense->addExpenseCategory();
+  }
 
   public function parsePath(){
     if (isset($_SERVER['REQUEST_URI'])) {

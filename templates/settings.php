@@ -18,17 +18,17 @@
         <?php $budget->showIncomsCategory('settings'); ?>
         <div class="row">
           <div class="col-sm-6">
-            <button class="btn btn-primary btn-block">Dodaj nową kategorię główną</button>
+            <button class="btn btn-primary btn-block add-new-category">Dodaj nową kategorię główną</button>
           </div>
           <div class="col-sm-6">
-            <button class="btn btn-primary btn-block">Dodaj nową podkategorię</button>
+            <button class="btn btn-primary btn-block add-new-subcategory">Dodaj nową podkategorię</button>
           </div>
         </div>
 
       </div>
     </div>
   </div>
-  <div class="panel panel-default">
+  <div class="panel panel-default expense-category-edit">
     <div class="panel-heading" role="tab" id="headingTwo">
       <h4 class="panel-title">
         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -42,10 +42,10 @@
         <?php $budget->showExpensCategory('settings'); ?>
         <div class="row">
           <div class="col-sm-6">
-            <button class="btn btn-primary btn-block">Dodaj nową kategorię główną</button>
+            <button class="btn btn-primary btn-block add-new-category">Dodaj nową kategorię główną</button>
           </div>
           <div class="col-sm-6">
-            <button class="btn btn-primary btn-block">Dodaj nową podkategorię</button>
+            <button class="btn btn-primary btn-block add-new-subcategory">Dodaj nową podkategorię</button>
           </div>
         </div>
       </div>
@@ -80,4 +80,10 @@
   </div>
 </div>
 </div>
-<script src="js/settings-page.js"	></script>
+<?php
+  include "templates\setting-modal-window\addNewIncomeSubcategory.php";
+  include "templates\setting-modal-window\addNewIncomeCategory.php";
+  include "templates\setting-modal-window\addNewExpenseSubcategory.php";
+  include "templates\setting-modal-window\addNewExpenseCategory.php";
+ ?>
+ <script src="js/settings-page.js"	></script>

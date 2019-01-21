@@ -55,6 +55,18 @@ switch($action):
   case 'load-expenses';
     echo $budget->showExpenses();
     break;
+  case 'add-income-subcategory';
+    $budget->addIncomeSubcategory();
+    break;
+  case 'add-income-category';
+    $budget->addIncomeCategory();
+    break;
+  case 'add-expense-subcategory';
+    $budget->addExpenseSubcategory();
+    break;
+  case 'add-expense-category';
+    $budget->addExpenseCategory();
+    break;
   default;
     include 'templates/mainTemplate.php';
  endswitch;
