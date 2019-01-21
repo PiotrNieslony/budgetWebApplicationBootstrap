@@ -189,7 +189,6 @@ class Expenses {
     return $expensesArray;
   }
 
-
   public function showSubCategory($parentCategoryId, $balaceDateFrom, $balaceDateTo){
     $loggedUserId = $_SESSION['loggedUser']['id'];
     $queryExpens = $this->db->query("SELECT  ecatu.id AS id , ecatu.name AS category, SUM(expenses.amount) AS amount
@@ -273,5 +272,123 @@ class Expenses {
     }
     $subTable .= "</tbody></table>";
     return $subTable;
+  }
+
+  public function addExpenseSubcategory() {
+    $validationCorrect = true;
+    $categoryName = $_POST['categoryName'];
+    $errors = array();
+    if((strlen($categoryName)<1) || ((strlen($categoryName)>25))) {
+      $validationCorrect = false;
+      $errors['e_categoryName'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+
+    if(!empty($_POST['categoryName'])){
+      try{
+        $query = $this->db->prepare('SELECT name FROM expenses_category_assigned_to_users
+                                    WHERE
+                                    user_id = :user_id AND
+                                    parent_category_id  = :parent_category_id AND
+                                    name = :category_name
+                                    ');
+        $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+        $query->bindValue(':parent_category_id', $_POST['categorys'] , PDO::PARAM_INT);
+        $query->bindValue(':category_name', $_POST['categoryName'],  PDO::PARAM_STR);
+        $query->execute();
+        if($query->rowCount() != 0) {
+          $errors['e_categoryName'] = "Podkategoria o takiej nazwie już istnieje. ";
+          $validationCorrect = false;
+        }
+      }
+     catch(Exception $e){
+        $errors['Błąd: '] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    }
+
+
+    if(!isset($_POST['categorys'])){
+      $validationCorrect = false;
+      $errors['e_parentCategory'] = "Wybierz kategorię";
+    }
+
+    if($validationCorrect){
+      try{
+        $query = $this->db->prepare('INSERT INTO expenses_category_assigned_to_users
+                                    VALUES(
+                                      NULL,
+                                      :user_id,
+                                      :parent_category_id,
+                                      :category_name
+                                      )
+                                    ');
+        $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+        $query->bindValue(':parent_category_id', $_POST['categorys'] , PDO::PARAM_INT);
+        $query->bindValue(':category_name', $_POST['categoryName'],  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      }
+     catch(Exception $e){
+        $errors['e_categoryName'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    } else {
+      echo json_encode($errors);
+    }
+
+
+  }
+
+  public function addExpenseCategory() {
+    $validationCorrect = true;
+    $categoryName = $_POST['categoryName'];
+    $errors = array();
+    if((strlen($categoryName)<1) || ((strlen($categoryName)>25))) {
+      $validationCorrect = false;
+      $errors['e_categoryName'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+
+    try{
+      $query = $this->db->prepare('SELECT name FROM incomes_category_assigned_to_users
+                                  WHERE
+                                  user_id = :user_id AND
+                                  id  = parent_category_id AND
+                                  name = :category_name
+                                  ');
+      $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+      $query->bindValue(':category_name', $_POST['categoryName'],  PDO::PARAM_STR);
+      $query->execute();
+      if($query->rowCount() != 0) {
+        $errors['e_categoryName'] = "Kategoria o takiej nazwie już istnieje. ";
+        $validationCorrect = false;
+      }
+    }
+   catch(Exception $e){
+      $errors['e_categoryName'] = $e->getMessage();
+      echo json_encode($errors);
+    }
+
+    if($validationCorrect){
+      try{
+        $query = $this->db->prepare('INSERT INTO incomes_category_assigned_to_users
+                                      SELECT (MAX(id)+1), :user_id , (MAX(id)+1), :category_name
+                                      FROM incomes_category_assigned_to_users
+                                    ');
+        $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+        $query->bindValue(':category_name', $_POST['categoryName'],  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      }
+     catch(Exception $e){
+        $errors['e_categoryName'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    } else {
+      echo json_encode($errors);
+    }
+
+
   }
 }
