@@ -15,7 +15,9 @@
     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
         <strong>Edytuj istniejące kategorie:</strong>
-        <?php $budget->showIncomsCategory('settings'); ?>
+        <div class="category">
+          <?php $budget->showIncomsCategory('settings'); ?>
+        </div>
         <div class="row">
           <div class="col-sm-6">
             <button class="btn btn-primary btn-block add-new-category">Dodaj nową kategorię główną</button>
@@ -39,7 +41,9 @@
     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
       <div class="panel-body">
         <strong>Istniejące kategorie:</strong>
-        <?php $budget->showExpensCategory('settings'); ?>
+        <div class="category">
+          <?php $budget->showExpensCategory('settings'); ?>
+        </div>
         <div class="row">
           <div class="col-sm-6">
             <button class="btn btn-primary btn-block add-new-category">Dodaj nową kategorię główną</button>
@@ -85,5 +89,6 @@
   include "templates\setting-modal-window\addNewIncomeCategory.php";
   include "templates\setting-modal-window\addNewExpenseSubcategory.php";
   include "templates\setting-modal-window\addNewExpenseCategory.php";
+  include "templates\setting-modal-window\deleteCategory.php";
  ?>
  <script src="js/settings-page.js"	></script>

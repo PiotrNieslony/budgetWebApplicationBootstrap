@@ -67,6 +67,12 @@ switch($action):
   case 'add-expense-category';
     $budget->addExpenseCategory();
     break;
+  case 'delete-category';
+    $budget->deleteCategory();
+    break;
+  case 'load-category';
+    $budget->loadCategory();
+    break;
   default;
     include 'templates/mainTemplate.php';
  endswitch;

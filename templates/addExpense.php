@@ -27,7 +27,7 @@
               unset($_SESSION['e_expenseDate']); ?>
             </div>
           </div>
-          <diV class="col-md-4">
+          <diV class="col-md-12">
             <div class="form-group">
               <strong>Sposób płatności</strong>
               <select name="paymentType" class="form-control">
