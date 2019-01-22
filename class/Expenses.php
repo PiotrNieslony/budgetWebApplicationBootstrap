@@ -283,7 +283,7 @@ class Expenses {
       $errors['e_categoryName'] = "Nazwa musi posiadać od 1 do 25 znaków.";
     }
 
-    if(!empty($_POST['categoryName'])){
+    if((!empty($_POST['categoryName'])) && (!empty($_POST['categorys']))){
       try{
         $query = $this->db->prepare('SELECT name FROM expenses_category_assigned_to_users
                                     WHERE
@@ -350,7 +350,7 @@ class Expenses {
     }
 
     try{
-      $query = $this->db->prepare('SELECT name FROM incomes_category_assigned_to_users
+      $query = $this->db->prepare('SELECT name FROM expenses_category_assigned_to_users
                                   WHERE
                                   user_id = :user_id AND
                                   id  = parent_category_id AND
@@ -371,9 +371,9 @@ class Expenses {
 
     if($validationCorrect){
       try{
-        $query = $this->db->prepare('INSERT INTO incomes_category_assigned_to_users
+        $query = $this->db->prepare('INSERT INTO expenses_category_assigned_to_users
                                       SELECT (MAX(id)+1), :user_id , (MAX(id)+1), :category_name
-                                      FROM incomes_category_assigned_to_users
+                                      FROM expenses_category_assigned_to_users
                                     ');
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
         $query->bindValue(':category_name', $_POST['categoryName'],  PDO::PARAM_STR);
@@ -390,5 +390,40 @@ class Expenses {
     }
 
 
+  }
+
+  public function deleteCategory(){
+    $categoryID  = $_POST['categoryID'];
+    $subCategory = $_POST['subCategory'];
+    $userID      = $_SESSION['loggedUser']['id'];
+    $errors       = array();
+    if($subCategory){
+      $sqlDeleteItems  =
+              "DELETE FROM expenses
+              WHERE expense_category_assigned_to_user_id  = $categoryID
+              AND user_id = $userID";
+      $sqlDeleteCategory =
+              "DELETE FROM expenses_category_assigned_to_users
+              WHERE id  = $categoryID AND user_id = $userID";
+    } else {
+      $sqlDeleteItems  =
+              "DELETE e FROM expenses e
+              INNER JOIN expenses_category_assigned_to_users exatu
+              ON e.expense_category_assigned_to_user_id = exatu.id
+              WHERE exatu.parent_category_id  = $categoryID
+              AND e.user_id = $userID";
+      $sqlDeleteCategory =
+              "DELETE FROM expenses_category_assigned_to_users
+              WHERE parent_category_id  = $categoryID AND user_id = $userID";
+    }
+    try{
+      $this->db->query($sqlDeleteItems);
+      $this->db->query($sqlDeleteCategory);
+    } catch(Exception $e){
+      $error['e_db'] = $e->getMessage();
+      echo json_encode($errors);
+    }
+    $output = array('ok');
+    echo json_encode($output);
   }
 }

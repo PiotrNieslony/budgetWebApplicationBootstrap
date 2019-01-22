@@ -1,5 +1,5 @@
 <?php if(!isset($budget)) die();?>
-<div class="modal fade addNeweIncomeCategory" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade addNewIncomeCategory" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
@@ -14,7 +14,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <strong>Nazwa kategorii</strong>
-                <input name="categoryName" class="form-control" type="text" />
+                <input name="categoryName" class="form-control" type="text"/>
                 <p class='e_categoryName alert alert-danger' style="display:none;"></p>
               </div>
             </div>

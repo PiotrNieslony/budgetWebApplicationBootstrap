@@ -216,7 +216,7 @@ class Budget {
   private function generateCategoryHtml($categoryArray, $where){
     foreach($categoryArray as $category){
       if($category[1] == $category[0]){
-        echo "<div class=\"radio mainCategory\" id=\"expenseCategory\">
+        echo "<div class=\"radio mainCategory\">
                 <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
                 <span class='checkmark'></span>";
         if($where == 'settings')
@@ -232,7 +232,7 @@ class Budget {
         echo "<div class=\"subCategory\">";
         foreach($categoryArray as $subCategory)
             if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
-              echo "<div class=\"radio\" id=\"expenseCategory\">
+              echo "<div class=\"radio \">
                       <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
                       <span class='checkmark'></span>";
               if($where == 'settings')
@@ -333,6 +333,24 @@ class Budget {
   public function addExpenseCategory(){
     $expense = new Expenses($this->db);
     return $expense->addExpenseCategory();
+  }
+
+  public function deleteCategory(){
+    if($_POST['categoryType'] == "income"){
+      $incomes = new Incomes($this->db);
+      return $incomes->deleteCategory();
+    } elseif ($_POST['categoryType'] == "expense") {
+      $expense = new Expenses($this->db);
+      return $expense->deleteCategory();
+    }
+  }
+
+  public function loadCategory(){
+    if($_POST['categoryType'] == "income"){
+      return $this->showIncomsCategory("settings");
+    } elseif ($_POST['categoryType'] == "expense") {
+      return $this->showExpensCategory("settings");
+    }
   }
 
   public function parsePath(){
