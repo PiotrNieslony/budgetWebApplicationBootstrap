@@ -73,6 +73,12 @@ switch($action):
   case 'load-category';
     $budget->loadCategory();
     break;
+  case 'edit-category';
+    $budget->editCategory();
+    break;
+  case 'modification-payment-method';
+    $budget->modificationOfPaymentMethod();
+    break;
   default;
     include 'templates/mainTemplate.php';
  endswitch;

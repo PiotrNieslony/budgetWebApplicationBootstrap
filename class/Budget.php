@@ -57,6 +57,40 @@ class Budget {
     }
   }
 
+  private function copyCategoryFromDefault($catType, $userID){
+    $defaultTableName  = $catType."_category_default";
+    $categoryTableName = $catType."_category_assigned_to_users";
+    $query = $this->db->query("SELECT * FROM $defaultTableName");
+    $query->execute();
+    $defaultCategorys = $query->fetchAll();
+    foreach($defaultCategorys as $category){
+      $categoryName  = $category['name'];
+    $this->db->query("INSERT INTO $categoryTableName
+                       VALUES (NULL, $userID , NULL, '$categoryName')");
+      $lastID = $this->db->getSingleValue("SELECT MAX(id) FROM $categoryTableName
+                                          WHERE user_id = $userID");
+      if($category['parent_category_id'] == $category['id']){
+        $id = $lastID;
+      } else {
+        $parentCategoryName = "";
+        foreach($defaultCategorys as $category2){
+          if($category2['id'] == $category['parent_category_id'] ){
+            $parentCategoryName = $category2['name'];
+            break;
+          }
+        }
+        $id = $this->db->getSingleValue("SELECT id FROM $categoryTableName
+                                        WHERE user_id = $userID
+                                        AND name = '$parentCategoryName'
+                                        AND parent_category_id = id");
+      }
+      $this->db->query("UPDATE $categoryTableName
+                        SET parent_category_id = $id
+                        WHERE id = $lastID ");
+   }
+
+  }
+
   public function register(){
     if(!isset($_POST['inputLogin'])) return false;
     //Validation
@@ -135,27 +169,17 @@ class Budget {
     }
 
     if($validation) {
+        $_SESSION['typedLogin'] = $login;
         $pass_hash = password_hash($pass1, PASSWORD_DEFAULT);
         $query = $this->db->prepare('INSERT INTO users VALUES (NULL, :username, :password, :email)');
         $query->bindValue(':username', $login, PDO::PARAM_STR);
         $query->bindValue(':password', $pass_hash , PDO::PARAM_STR);
         $query->bindValue(':email', $email, PDO::PARAM_STR);
         $query->execute();
-        $_SESSION['typedLogin'] = $login;
+        $userID = $this->db->getSingleValue("SELECT id FROM users WHERE username = '$login'");
 
-        $addDefalutExpensesCategory = "INSERT INTO expenses_category_assigned_to_users(user_id, name)
-                                SELECT users.id, ex.name
-                                FROM users
-                                INNER JOIN
-                                expenses_category_default ex
-                                where users.username = '$login';";
-
-        $addDefalutIncomeCategory = "INSERT INTO incomes_category_assigned_to_users(user_id, name)
-                                SELECT users.id, inco.name
-                                FROM users
-                                INNER JOIN
-                                incomes_category_default inco
-                                where users.username = '$login';";
+        $this->copyCategoryFromDefault("expenses", $userID);
+        $this->copyCategoryFromDefault("incomes", $userID);
 
         $addPaymentMethods = "INSERT INTO payment_methods_assigned_to_users(user_id, name)
                                 SELECT users.id, pd.name
@@ -164,8 +188,7 @@ class Budget {
                                 payment_methods_default pd
                                 where users.username = '$login';";
 
-        $this->db->query($addDefalutExpensesCategory);
-        $this->db->query($addDefalutIncomeCategory);
+
         $this->db->query($addPaymentMethods);
         header('Location: registration-confirm.php');
         return true;
@@ -250,13 +273,28 @@ class Budget {
     }
   }
 
-  public function showExpensPaymentMethod() {
-    $paymentMethodQuery = $this->db->prepare('SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id');
-    $paymentMethodQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
-    $paymentMethodQuery->execute();
-    $paymentMethods = $paymentMethodQuery->fetchAll();
-    foreach($paymentMethods as $paymentMethod){
-      echo "<option value=\"$paymentMethod[0]\">$paymentMethod[1]</option>";
+  public function modificationOfPaymentMethod(){
+    $action = $_POST['operation'];
+    $expenses = new Expenses($this->db);
+    switch($action){
+      case 'add':
+        $expenses->addPaymentMethod();
+        break;
+      case 'edit':
+        $expenses->editPaymentMethod();
+        break;
+      case 'delete':
+        $expenses->deletePaymentMethod();
+        break;
+    }
+  }
+
+  public function showExpensPaymentMethod($where) {
+    $expense = new Expenses($this->db);
+    if($where == 'addExpense'){
+      $expense->showExpensPaymentMethod();
+    } elseif($where =="settings"){
+      $expense->showExpensPaymentMethodSetting();
     }
   }
 
@@ -346,10 +384,22 @@ class Budget {
   }
 
   public function loadCategory(){
+    $where = "settings";
+    if(isset($_POST['where'])) $where = "addSubcategory";
     if($_POST['categoryType'] == "income"){
-      return $this->showIncomsCategory("settings");
+      return $this->showIncomsCategory($where);
     } elseif ($_POST['categoryType'] == "expense") {
-      return $this->showExpensCategory("settings");
+      return $this->showExpensCategory($where);
+    }
+  }
+
+  public function editCategory(){
+    if($_POST['categoryType'] == "income"){
+      $incomes = new Incomes($this->db);
+      return $incomes->editCategory();
+    } elseif ($_POST['categoryType'] == "expense") {
+      $expense = new Expenses($this->db);
+      return $expense->editCategory();
     }
   }
 

@@ -55,7 +55,8 @@
   background: white; }
 
 /* Style the indicator (dot/circle) */
-.settings label > button {
+.settings label > button,
+.settings li > button {
   float: right;
   margin-left: 5px; }
 .settings .row button {
