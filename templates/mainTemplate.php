@@ -46,6 +46,9 @@
 			            case 'ustawienia' :
 			              include 'templates/settings.php';
 			              break;
+			            case 'test' :
+			              include 'templates/test.php';
+			              break;
 			          endswitch;
 			        ?>
 				</main>

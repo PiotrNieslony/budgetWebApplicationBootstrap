@@ -148,13 +148,14 @@ class Incomes {
   }
 
   public function showIncoms($balaceDateFrom, $balaceDateTo) {
+    $userID = $_SESSION['loggedUser']['id'];
     $queryIncoms = $this->db->query("SELECT ipcatu.id AS id, icatu.name AS category, SUM(incomes.amount) AS amount
                     FROM incomes
                     INNER JOIN incomes_category_assigned_to_users icatu
                     ON incomes.income_category_assigned_to_user_id = icatu.id
                     INNER JOIN incomes_parent_category_assigned_to_users ipcatu
                     ON icatu.parent_category_id = ipcatu.id
-                    WHERE incomes.user_id = 38
+                    WHERE incomes.user_id = $userID
                     AND date_of_income >= '$balaceDateFrom'
                     AND date_of_income <= '$balaceDateTo'
                     GROUP BY icatu.parent_category_id
@@ -419,5 +420,54 @@ class Incomes {
     }
     $output = array('ok');
     echo json_encode($output);
+  }
+
+  public function editCategory(){
+    $categoryID       = $_POST['categoryID'];
+    $subCategory      = $_POST['subCategory'];
+    $categoryName          = $_POST['categoryName'];
+    if(isset($_POST['parentCategoryID']))
+      $parentCategoryID = $_POST['parentCategoryID'];
+    else
+      $parentCategoryID = $categoryID;
+    $userID           = $_SESSION['loggedUser']['id'];
+    $errors           = array();
+    if($subCategory){
+      try{
+        $query = $this->db->prepare(
+              "UPDATE incomes_category_assigned_to_users
+              SET
+              parent_category_id = :parentCategoryID,
+              name               = :categoryName
+              WHERE id  = :category_id AND user_id = :user_id");
+        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+        $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
+        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      } catch(Exception $e){
+        $error['e_db'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    } else {
+      try{
+        $query = $this->db->prepare(
+              "UPDATE incomes_category_assigned_to_users
+              SET
+              name               = :categoryName
+              WHERE id  = :category_id AND user_id = :user_id");
+        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      } catch(Exception $e){
+        $error['e_db'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    }
   }
 }

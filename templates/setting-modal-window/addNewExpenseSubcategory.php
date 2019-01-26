@@ -23,9 +23,8 @@
             <div class="col-md-12">
               <div class="form-group">
                 <strong>Wybierz kategorię nadrzędną</strong>
-                <?php
-                  $budget->showExpensCategory('addSubcategory');
-                ?>
+                  <div class="category">
+                  </div>
                 <p class='e_parentCategory alert alert-danger' style="display:none;"></p>
               </div>
             </div>

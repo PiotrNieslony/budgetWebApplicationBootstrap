@@ -162,7 +162,6 @@ class Expenses {
                     GROUP BY ecatu.parent_category_id
                     ORDER BY SUM(expenses.amount) DESC;");
     $expensesArray = $queryExpens->fetchAll();
-    $columnsQuantity = sizeof($expensesArray[0])/2;
     $counter = 1;
     $expenses = new Expenses($this->db);
     $sum = $expenses->sumExpenses($balaceDateFrom,$balaceDateTo);
@@ -187,6 +186,94 @@ class Expenses {
     $_SESSION['selected-date-from'] = $balaceDateFrom;
     $_SESSION['selected-date-to'] = $balaceDateTo;
     return $expensesArray;
+  }
+
+  public function addPaymentMethod(){
+    $validationCorrect = true;
+    $paymentMethodName = $_POST['paymentMethod'];
+    $errors = array();
+    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
+      $validationCorrect = false;
+      $errors['e_paymentMethod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
+    if($validationCorrect){
+      $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
+      $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+      $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
+      $query->execute();
+      echo json_encode(array("ok"));
+    } else {
+      echo json_encode($errors);
+    }
+  }
+
+  public function editPaymentMethod(){
+    $validationCorrect = true;
+    $paymentMethodName = $_POST['paymentMethod'];
+    $errors = array();
+    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
+      $validationCorrect = false;
+      $errors['e_paymentMetod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
+    if($validationCorrect){
+      $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
+      $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+      $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
+      $query->execute();
+      echo json_encode(array("ok"));
+    } else {
+      echo json_encode($errors);
+    }
+  }
+  
+  public function deletePaymentMethod(){
+    $validationCorrect = true;
+    $paymentMethodName = $_POST['paymentMethod'];
+    $errors = array();
+    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
+      $validationCorrect = false;
+      $errors['e_paymentMetod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
+    if($validationCorrect){
+      $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
+      $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+      $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
+      $query->execute();
+      echo json_encode(array("ok"));
+    } else {
+      echo json_encode($errors);
+    }
+  }
+
+  private function getPaymentMethod(){
+    $paymentMethodQuery = $this->db->prepare('SELECT id, name FROM payment_methods_assigned_to_users WHERE user_id = :user_id');
+    $paymentMethodQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+    $paymentMethodQuery->execute();
+    return $paymentMethodQuery->fetchAll();
+  }
+
+  public function showExpensPaymentMethod() {
+    $paymentMethods = $this->getPaymentMethod();
+    foreach($paymentMethods as $paymentMethod){
+      echo "<option value=\"$paymentMethod[0]\">$paymentMethod[1]</option>";
+    }
+  }
+
+  public function showExpensPaymentMethodSetting() {
+    $paymentMethods = $this->getPaymentMethod();
+    foreach($paymentMethods as $paymentMethod){
+      echo "<li class=\"list-group-item\">$paymentMethod[1]
+      <button class=\"btn btn-xs btn-danger delete\">
+        <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
+      </button>
+      <button class=\"btn btn-xs btn-primary edit\">
+        <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
+      </button>
+      </li>";
+    }
   }
 
   public function showSubCategory($parentCategoryId, $balaceDateFrom, $balaceDateTo){
@@ -425,5 +512,54 @@ class Expenses {
     }
     $output = array('ok');
     echo json_encode($output);
+  }
+
+  public function editCategory(){
+    $categoryID       = $_POST['categoryID'];
+    $subCategory      = $_POST['subCategory'];
+    $categoryName          = $_POST['categoryName'];
+    if(isset($_POST['parentCategoryID']))
+      $parentCategoryID = $_POST['parentCategoryID'];
+    else
+      $parentCategoryID = $categoryID;
+    $userID           = $_SESSION['loggedUser']['id'];
+    $errors           = array();
+    if($subCategory){
+      try{
+        $query = $this->db->prepare(
+              "UPDATE expenses_category_assigned_to_users
+              SET
+              parent_category_id = :parentCategoryID,
+              name               = :categoryName
+              WHERE id  = :category_id AND user_id = :user_id");
+        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+        $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
+        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      } catch(Exception $e){
+        $error['e_db'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    } else {
+      try{
+        $query = $this->db->prepare(
+              "UPDATE expenses_category_assigned_to_users
+              SET
+              name               = :categoryName
+              WHERE id  = :category_id AND user_id = :user_id");
+        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+        $query->execute();
+        $output = array('ok');
+        echo json_encode($output);
+      } catch(Exception $e){
+        $error['e_db'] = $e->getMessage();
+        echo json_encode($errors);
+      }
+    }
   }
 }

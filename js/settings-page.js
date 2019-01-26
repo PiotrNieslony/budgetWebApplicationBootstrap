@@ -1,8 +1,9 @@
 var passingValue = {};
-
-// SHOW SUBCATEGORY INCOME MODAL
+//ADD NEW INCOME SUBCATEGORY
 $('body').on("click", ".income-category-edit .add-new-subcategory", function(){
+  // SHOW SUBCATEGORY INCOME MODAL
   passingValue.categoryType = categoryType($(this));
+  loadCategory(passingValue.categoryType, ".addNewIncomeSubcategory");
   prepareModal(".addNewIncomeSubcategory");
   $('.addNewIncomeSubcategory').modal();
 })
@@ -16,8 +17,9 @@ $(".addNewIncomeSubcategory button[type='submit']").click(function(){
   sendAjaxFromModal(".addNewIncomeSubcategory", "index.php?action=add-income-subcategory" ,passingValue);
 });
 
-// SHOW CATEGORY INCOME MODAL
+//ADD NEW INCOME CATEGORY
 $('body').on("click", ".income-category-edit .add-new-category", function(){
+  // SHOW CATEGORY INCOME MODAL
   passingValue.categoryType = categoryType($(this));
   prepareModal(".addNewIncomeCategory");
   $('.addNewIncomeCategory').modal();
@@ -30,10 +32,11 @@ $(".addNewIncomeCategory button[type='submit']").click(function(){
   sendAjaxFromModal(".addNewIncomeCategory", "index.php?action=add-income-category" ,passingValue);
 });
 
-// SHOW SUBCATEGORY EXPENSE MODAL
+//ADD NEW EXPENSE SUBCATEGORY
 $('body').on("click", ".expense-category-edit .add-new-subcategory", function(){
+  // SHOW SUBCATEGORY EXPENSE MODAL;
   passingValue.categoryType = categoryType($(this));
-  console.log(passingValue);
+  loadCategory(passingValue.categoryType, ".addNewExpenseSubcategory");
   prepareModal(".addNewExpenseSubcategory");
   $('.addNewExpenseSubcategory').modal();
 })
@@ -47,8 +50,9 @@ $(".addNewExpenseSubcategory button[type='submit']").click(function(){
   sendAjaxFromModal(".addNewExpenseSubcategory", "index.php?action=add-expense-subcategory" ,passingValue);
 });
 
-// SHOW CATEGORY EXPENSE MODAL
+//ADD NEW CATEGORY
 $('body').on("click", ".expense-category-edit .add-new-category", function(){
+  // SHOW CATEGORY EXPENSE MODAL
   passingValue.categoryType = categoryType($(this));
   $('.addNeweExpenseCategory').modal();
   prepareModal(".addNeweExpenseCategory");
@@ -65,10 +69,8 @@ $(".addNeweExpenseCategory button[type='submit']").click(function(){
 $('body').on("click", ".category .delete", function(){
   var categoryID = $(this).siblings('input').val();
   var categoryName = $(this).parent().text();
-  var subcategoryClass  = $(this).closest("div").parent("div").attr("class");
   passingValue.categoryID = categoryID;
-  passingValue.subCategory = false
-  if(subcategoryClass == "subCategory") passingValue.subCategory = true;
+  passingValue.subCategory = isSubCategory($(this));
   passingValue.categoryType = categoryType($(this));
   console.dir(passingValue);
   $('.deleteCategory').attr("id",categoryID);
@@ -88,6 +90,59 @@ $(".deleteCategory button[type='submit']").click(function(){
   sendAjaxFromModal(".deleteCategory", "index.php?action=delete-category" , passingValue);
 });
 
+// EDIT CATEGORY MODAL
+$('body').on("click", ".category .edit", function(){
+  var categoryID           = $(this).siblings('input').val();
+  var categoryName         = $.trim($(this).parent().text());
+  var subcategoryClass     = $(this).closest("div").parent("div").attr("class");
+  var parentCategoryID       = $(this).closest(".subCategory").prev().find("input").val();
+  passingValue.parentCategoryID =parentCategoryID;
+  passingValue.categoryID   = categoryID;
+  passingValue.subCategory  = isSubCategory($(this));
+  passingValue.categoryType = categoryType($(this));
+  $('.editCategory').attr("id",categoryID);
+  $('.editCategory input[name="categoryName"]').val(categoryName);
+  if(passingValue.subCategory) {
+    $(".category-section").show();
+    loadCategory(passingValue.categoryType, ".editCategory");
+  }
+  else $(".category-section").hide();
+  prepareModal(".editCategory");
+  $('.editCategory').modal();
+  $('.editCategory').on('shown.bs.modal', function () {
+    $('.editCategory input[value=' + parentCategoryID + ']').prop('checked', true);
+  });
+})
+
+//SEND EDIT CATEGORY TO DB
+$('body').on("click", ".editCategory button[type='submit']", function(){
+  passingValue.categoryName     = $('.editCategory input[name="categoryName"]').val();
+  passingValue.parentCategoryID = $('.editCategory input[name="categorys"]:checked').val();
+  sendAjaxFromModal(".editCategory", "index.php?action=edit-category" , passingValue);
+});
+
+//Add peymenth method
+$('body').on("click", ".payment-type-edit .add-new-payment-method", function(){
+  console.log("OK")
+  $('.addNewPayentMethod').modal();
+  prepareModal(".addNewPayentMethod");
+})
+
+//SEND NEW PAYMENTH METHOD TO DB
+$('body').on("click", ".addNewPayentMethod button[type='submit']", function(){
+  passingValue.operation      = 'add'
+  passingValue.paymentMethod  = $('.addNewPayentMethod input[name="paymentMethod"]').val();
+  console.dir(passingValue);
+  sendAjaxFromModal(".addNewPayentMethod", "index.php?action=modification-payment-method" , passingValue);
+});
+
+function isSubCategory(hook){
+  var subcategoryClass  = hook.closest("div").parent("div").attr("class");
+  var subCategory = false
+  if(subcategoryClass == "subCategory") subCategory = true;
+  return subCategory;
+}
+
 function categoryType(hook){
   var categoryType = hook.closest(".panel ").attr("class");
   categoryType = categoryType.search("income");
@@ -100,6 +155,8 @@ function prepareModal(modalWindowName){
   $(modalWindowName + " .alert.alert-danger").hide();
   $('.success-content').hide()
   $('.proper-content').show();
+  if((modalWindowName.search("add")) > -1)
+      $(modalWindowName + " input[type='text']").val("");
   $(modalWindowName).on('shown.bs.modal', function (e) {
     $(modalWindowName + " input[type='text']").focus();
     })
@@ -135,20 +192,23 @@ function sendAjaxFromModal(modalForm, url, value){
   });
 }
 
-function loadCategory(categoryType){
+function loadCategory(categoryType, where){
   $.ajax({
     type: "POST",
     url: "index.php?action=load-category",
     data: {
-      categoryType :categoryType
+      categoryType :categoryType,
+      where        : where
     },
     dataType: "html",
     cache: false,
     success: function(data){
-      if(categoryType == "income")
-        $(".income-category-edit .category").html(data);
-      else if(categoryType == "expense")
-        $(".expense-category-edit .category").html(data);
+      var hook =""
+      //console.log("where = " + where + " cat= " + categoryType );
+      if(where !== undefined) hook = where;
+      else if(categoryType == "income") hook = ".income-category-edit";
+      else if(categoryType == "expense") hook = ".expense-category-edit";
+      $(hook + " .category").html(data);
     },
     error: function(msg){
       console.log('Exception:', msg);
