@@ -79,6 +79,9 @@ switch($action):
   case 'modification-payment-method';
     $budget->modificationOfPaymentMethod();
     break;
+  case 'load-piece-of-page';
+    $budget->loadPieceOfPage();
+    break;
   default;
     include 'templates/mainTemplate.php';
  endswitch;

@@ -42,6 +42,12 @@
   > small > a,
   > .small > a {
     color: inherit;
+    &:hover,
+    &:focus,
+    &:active
+    {
+      text-decoration: none;
+    }
   }
 }
 

@@ -6,7 +6,7 @@ class Budget {
     $this->db = $this->initDB($host, $user, $pass, $db);
   }
 
-  public function initDB($host, $user, $pass, $db){
+  private function initDB($host, $user, $pass, $db){
     try{
         $db = new MyDB("mysql:host={$host};dbname={$db};charset = utf8",$user, $pass, [
             MyDB::ATTR_EMULATE_PREPARES => true,
@@ -290,11 +290,14 @@ class Budget {
   }
 
   public function showExpensPaymentMethod($where) {
+
     $expense = new Expenses($this->db);
-    if($where == 'addExpense'){
-      $expense->showExpensPaymentMethod();
-    } elseif($where =="settings"){
+    if($where =="settings"){
       $expense->showExpensPaymentMethodSetting();
+    } elseif($where =="addExpense"){
+      $expense->showExpensPaymentMethod();
+    } elseif($where =="settingsModal"){
+      $expense->showExpensPaymentMethodSettingModal();
     }
   }
 
@@ -393,6 +396,19 @@ class Budget {
     }
   }
 
+  public function loadPieceOfPage(){
+    if(isset($_POST['sectionName'])){
+      switch($_POST['sectionName']){
+        case 'listOfPayentMethod':
+          $this->showExpensPaymentMethod('settings');
+          break;
+        case 'listOfPayentMethodModal':
+          $this->showExpensPaymentMethod('settingsModal');
+          break;
+      }
+    }
+  }
+
   public function editCategory(){
     if($_POST['categoryType'] == "income"){
       $incomes = new Incomes($this->db);
@@ -414,5 +430,10 @@ class Budget {
       }
     }
     return $pathCall;
+  }
+
+  public function test($name){
+        $expenses = new Expenses($this->db);
+        $expenses->validatePaymentMethodName($name);
   }
 }

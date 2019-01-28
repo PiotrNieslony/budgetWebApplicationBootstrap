@@ -72,6 +72,11 @@ body {
   color: #398182;
   font-family: 'Titillium Web', sans-serif; }
 
+button > span {
+  float: left; }
+button.edit span, button.delete span {
+  float: none; }
+
 /*** LOGO ***/
 #logo {
   color: #398182;
@@ -224,7 +229,7 @@ body {
     padding: 10px 7px;
     margin-bottom: 5px;
     background-color: #398182;
-    text-align: center; }
+    text-align: left; }
     .main-menu li a:hover {
       background-color: #19B3B5; }
 

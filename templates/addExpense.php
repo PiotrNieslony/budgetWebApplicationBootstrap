@@ -9,7 +9,7 @@
         <?= (isset($_SESSION['success'])) ? "<p class=\"alert alert-success\">".$_SESSION['success']."</p>" : "";
         unset($_SESSION['success']); ?>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Kwota</strong>
               <input name="expenseAmount" class="form-control" type="number" step="0.01"/>
@@ -17,7 +17,7 @@
               unset($_SESSION['e_expenseAmount']); ?>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Data</strong>
               <input name="expenseDate" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
