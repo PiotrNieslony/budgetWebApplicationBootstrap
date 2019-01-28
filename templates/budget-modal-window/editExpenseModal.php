@@ -32,7 +32,7 @@
               <strong>Sposób płatności</strong>
               <select name="paymentType" class="form-control">
                 <?php
-                  $budget->showExpensPaymentMethod();
+                  $budget->showExpensPaymentMethod('addExpense');
                 ?>
               </select>
             </div>

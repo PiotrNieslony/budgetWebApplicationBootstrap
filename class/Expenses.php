@@ -188,6 +188,31 @@ class Expenses {
     return $expensesArray;
   }
 
+  private function validatePaymentMethodName($paymentMethodName){
+    $validationResult = array(
+      'validationCorrect' => true,
+      'errors' => array(
+        'e_paymentMethod'=>""
+      )
+    );
+    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
+      $validationResult['validationCorrect'] = false;
+      $validationResult['errors']['e_paymentMethod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+    }
+
+    $query = $this->db->prepare('SELECT id FROM payment_methods_assigned_to_users
+                                WHERE user_id = :user_id AND name = :payment_method_name ');
+    $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+    $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
+    $query->execute();
+
+    if($query->rowCount() > 0){
+      $validationResult['validationCorrect'] = false;
+      $validationResult['errors']['e_paymentMethod'] = "Metoda płatności o takiej nazwie już istnieje";
+    }
+    return $validationResult;
+  }
+
   public function addPaymentMethod(){
     $validationCorrect = true;
     $paymentMethodName = $_POST['paymentMethod'];
@@ -196,6 +221,19 @@ class Expenses {
       $validationCorrect = false;
       $errors['e_paymentMethod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
     }
+
+    $query = $this->db->prepare('SELECT name FROM payment_methods_assigned_to_users
+                                WHERE user_id = :user_id AND name = :payment_method_name ');
+    $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+    $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
+    $query->execute();
+
+    if($query->rowCount() > 0){
+      $validationCorrect = false;
+      $errors['e_paymentMethod'] = "Metoda płatności o takiej nazwie już istnieje";
+    }
+
+
     //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
     if($validationCorrect){
       $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
@@ -209,39 +247,43 @@ class Expenses {
   }
 
   public function editPaymentMethod(){
-    $validationCorrect = true;
-    $paymentMethodName = $_POST['paymentMethod'];
-    $errors = array();
-    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
-      $validationCorrect = false;
-      $errors['e_paymentMetod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
-    }
+    $paymentMethodID   = $_POST['paymentMethodID'];
+    $paymentMethodName = $_POST['paymentName'];
+    $validation = $this->validatePaymentMethodName($paymentMethodName);
+
     //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
-    if($validationCorrect){
-      $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
+    if($validation['validationCorrect']){
+      $query = $this->db->prepare('UPDATE payment_methods_assigned_to_users SET name = :payment_method_name
+                                  WHERE user_id = :user_id AND id = :id');
       $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
+      $query->bindValue(':id', $paymentMethodID, PDO::PARAM_INT);
       $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
       $query->execute();
       echo json_encode(array("ok"));
     } else {
-      echo json_encode($errors);
+      echo json_encode($validation['errors']);
     }
   }
-  
+
   public function deletePaymentMethod(){
     $validationCorrect = true;
-    $paymentMethodName = $_POST['paymentMethod'];
+    $userID = $_SESSION['loggedUser']['id'];
+    $paymentMethodID = $_POST['paymentMethodID'];
     $errors = array();
-    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
+    if(isset( $_POST['selectedMethod'])){
+      $paymentMethodSelectedID = $_POST['selectedMethod'];
+    } else {
       $validationCorrect = false;
-      $errors['e_paymentMetod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
+      $errors['e_paymentMetod'] = "Wybierz metodę płatności do której mają być przypisane wydatki.";
     }
-    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
+
     if($validationCorrect){
-      $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
-      $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
-      $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
-      $query->execute();
+      $sqlDeletePaymentMetod = "DELETE FROM payment_methods_assigned_to_users WHERE id = $paymentMethodID AND user_id = $userID";
+      $sqlChangPaymentMethodInExpenses = "UPDATE expenses
+      SET payment_method_assigned_to_user_id = $paymentMethodSelectedID
+      WHERE payment_method_assigned_to_user_id = $paymentMethodID AND user_id = $userID";
+      $this->db->query($sqlDeletePaymentMetod);
+      $this->db->query($sqlChangPaymentMethodInExpenses);
       echo json_encode(array("ok"));
     } else {
       echo json_encode($errors);
@@ -265,7 +307,7 @@ class Expenses {
   public function showExpensPaymentMethodSetting() {
     $paymentMethods = $this->getPaymentMethod();
     foreach($paymentMethods as $paymentMethod){
-      echo "<li class=\"list-group-item\">$paymentMethod[1]
+      echo "<li class=\"list-group-item\" data-payment-method-id=\"$paymentMethod[0]\">$paymentMethod[1]
       <button class=\"btn btn-xs btn-danger delete\">
         <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
       </button>
@@ -275,6 +317,24 @@ class Expenses {
       </li>";
     }
   }
+
+  public function showExpensPaymentMethodSettingModal(){
+    if(isset($_POST['paymentMethodID'])) $paymentMethodID = $_POST['paymentMethodID'];
+    $paymentMethods = $this->getPaymentMethod();
+    $key = array_search($paymentMethodID, array_column($paymentMethods, 'id'));
+    unset($paymentMethods[$key]);
+    $this->generateRadioList($paymentMethods, "payment-method");
+  }
+
+  private function generateRadioList($categoryArray, $radioListNaem){
+    foreach($categoryArray as $category){
+        echo "<div class=\"radio\">
+                <label><input type=\"radio\" name=\"$radioListNaem\" value=\"$category[0]\" />$category[1]
+                <span class='checkmark'></span>
+                  </label>
+              </div>";
+      }
+    }
 
   public function showSubCategory($parentCategoryId, $balaceDateFrom, $balaceDateTo){
     $loggedUserId = $_SESSION['loggedUser']['id'];

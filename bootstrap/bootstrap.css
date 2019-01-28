@@ -4724,6 +4724,20 @@ button.list-group-item-danger {
   .panel-title > small > a,
   .panel-title > .small > a {
     color: inherit; }
+    .panel-title > a:hover, .panel-title > a:focus, .panel-title > a:active,
+    .panel-title > small:hover,
+    .panel-title > small:focus,
+    .panel-title > small:active,
+    .panel-title > .small:hover,
+    .panel-title > .small:focus,
+    .panel-title > .small:active,
+    .panel-title > small > a:hover,
+    .panel-title > small > a:focus,
+    .panel-title > small > a:active,
+    .panel-title > .small > a:hover,
+    .panel-title > .small > a:focus,
+    .panel-title > .small > a:active {
+      text-decoration: none; }
 
 .panel-footer {
   padding: 10px 15px;

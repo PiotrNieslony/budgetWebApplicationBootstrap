@@ -12,6 +12,18 @@ body {
   font-family: 'Titillium Web', sans-serif;
 }
 
+button {
+  > span{
+    float:left;
+  }
+  &.edit,
+  &.delete{
+    span{
+      float:none;
+    }
+  }
+}
+
 /*** LOGO ***/
 #logo {
   color: $primary-color;
@@ -188,7 +200,7 @@ body {
       padding: 10px 7px;
       margin-bottom: 5px;
       background-color: rgba(57, 129, 130, 1);
-      text-align: center;
+      text-align: left;
       &:hover {
         background-color: #19B3B5;
       }

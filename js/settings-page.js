@@ -134,6 +134,48 @@ $('body').on("click", ".addNewPayentMethod button[type='submit']", function(){
   passingValue.paymentMethod  = $('.addNewPayentMethod input[name="paymentMethod"]').val();
   console.dir(passingValue);
   sendAjaxFromModal(".addNewPayentMethod", "index.php?action=modification-payment-method" , passingValue);
+  loadPieceOfPage('listOfPayentMethod');
+});
+
+// DELETE PAYMENT METHOD
+$('body').on("click", "#listOfPayentMethod .delete", function(){
+  var paymentMethodID = $(this).parent().data('payment-method-id');
+  var paymentName = $(this).parent().text();
+  passingValue.paymentMethodID = paymentMethodID;
+  var message = "Czy na pewno chcesz usunąć metodę płatności: <strong>" + paymentName +"</strong>?"
+  var message2 = "Wybierz metodę płatności , do której przypisać wydatki dotychczas przypisane do metody <strong>" +paymentName + "</strong>."
+  $('.deletePaymentMethod .alert-warning').html(message);
+  $('#message2').html(message2);
+  passingValue.sectionName = 'listOfPayentMethodModal';
+  console.log(passingValue);
+  loadPieceOfPage(passingValue);
+  prepareModal(".deletePaymentMethod");
+  $('.deletePaymentMethod').modal();
+})
+
+//DELETE PAYMENT METHDO TO DB
+$(".deletePaymentMethod button[type='submit']").click(function(){
+  passingValue.operation      = 'delete'
+  passingValue.selectedMethod = $("#listOfPayentMethodModal input[name='payment-method']:checked").val();
+  sendAjaxFromModal(".deletePaymentMethod", "index.php?action=modification-payment-method" , passingValue);
+});
+
+// EDIT PAYMENT METHOD
+$('body').on("click", "#listOfPayentMethod .edit", function(){
+  var paymentMethodID = $(this).parent().data('payment-method-id');
+  var paymentName = $(this).parent().text().trim();
+  passingValue.paymentMethodID = paymentMethodID;
+  passingValue.paymentName = paymentName;
+  $(".editPaymenttMethod input").val(paymentName);
+  prepareModal(".editPaymenttMethod");
+  $('.editPaymenttMethod').modal();
+})
+
+//EDIT PAYMENT METHDO TO DB
+$(".editPaymenttMethod button[type='submit']").click(function(){
+  passingValue.operation      = 'edit'
+  passingValue.paymentName = $(".editPaymenttMethod input").val();
+  sendAjaxFromModal(".editPaymenttMethod", "index.php?action=modification-payment-method" , passingValue);
 });
 
 function isSubCategory(hook){
@@ -172,12 +214,16 @@ function sendAjaxFromModal(modalForm, url, value){
     dataType: "json",
     cache: false,
     success: function(data){
-      console.log(data);
+      console.log("ajax:"  + data);
       $(modalForm + " .alert.alert-danger").hide();
       if(data[0] == "ok"){
-        loadCategory(value.categoryType);
         $(modalForm + " .success-content").show();
         $(modalForm + " .proper-content").hide();
+        if(value.categoryType == 'income' || value.categoryType == 'expense') loadCategory(value.categoryType);
+        if(modalForm == '.addNewPayentMethod' || modalForm == '.deletePaymentMethod' ){
+          passingValue.sectionName = 'listOfPayentMethod';
+          loadPieceOfPage(passingValue);
+        }
       } else {
         for(key in data){
           $("." + key).text(data[key]);
@@ -209,6 +255,23 @@ function loadCategory(categoryType, where){
       else if(categoryType == "income") hook = ".income-category-edit";
       else if(categoryType == "expense") hook = ".expense-category-edit";
       $(hook + " .category").html(data);
+    },
+    error: function(msg){
+      console.log('Exception:', msg);
+    }
+  });
+}
+
+function loadPieceOfPage(passingValue){
+  $.ajax({
+    type: "POST",
+    url: "index.php?action=load-piece-of-page",
+    data: passingValue,
+    dataType: "html",
+    cache: false,
+    success: function(data){
+      //console.log(sectionName  + " : " + data);
+      $("#" + passingValue.sectionName).html(data);
     },
     error: function(msg){
       console.log('Exception:', msg);

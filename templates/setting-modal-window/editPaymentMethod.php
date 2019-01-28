@@ -1,13 +1,13 @@
 <?php if(!isset($budget)) die();?>
-<div class="modal fade addNewPayentMethod" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade editPaymenttMethod" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Dodawanie sposób płatności</h4>
+          <h4 class="modal-title">Edycja sposobu płatności </h4>
         </div>
         <div class="modal-body success-content" style="display:none;">
-          <p class='alert alert-success'>Nowy sposób płatności został dodany</p>
+          <p class='alert alert-success'>Dane zostały zmienione</p>
         </div>
         <div class="modal-body proper-content">
           <div class="row">
