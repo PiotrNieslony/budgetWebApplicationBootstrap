@@ -64,16 +64,19 @@
 						<li>Możliwość edycji wprowadzonych wydatków</li>
 						<li>Dodawanie kategorii dla przychodów i wydatków</li>
 						<li>Edycja kategorii</li>
-						<li>Podkategorie wydatków</li>
+						<li>Podkategorie wydatków i przychodów</li>
+						<li>Wybór sposobu płatności</li>
 						<li>Wizualizacja bilansu za pomocą wykresów</li>
 						<li>Bilans dla dowolnego przedziału czasu</li>
 						<li>Wersja mobilna</li>
 					</ul>
 				</div>
 				<div class="col-lg-6">
-					<a data-toggle="modal" data-target="#imageModal">
-						<img src="img/screen-shot.png" class="img-responsive" alt="Zrzut ekranu aplikacji">
-					</a>
+					<div class="img-crop">
+						<a data-toggle="modal" data-target="#imageModal">
+							<img src="img/screen-shot.png" class="img-responsive" alt="Zrzut ekranu aplikacji">
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -67,6 +67,8 @@
   display: block; }
   .settings .panel a[data-parent="#accordion"].collapsed .glyphicon-chevron-up {
     transform: rotate(180deg); }
+  .settings .panel a[data-parent="#accordion"] .glyphicon:first-child {
+    margin-right: 10px; }
 .settings .panel .glyphicon-chevron-up {
   float: right; }
 
@@ -219,6 +221,8 @@ button.edit span, button.delete span, button.extend span {
     text-align: center; }
     .sidebar p b {
       text-transform: capitalize; }
+  .sidebar .glyphicon {
+    margin-right: 7px; }
 
 .main-menu ul {
   margin: 0;
@@ -333,9 +337,11 @@ button.edit span, button.delete span, button.extend span {
         padding-right: 15px;
         padding-top: 5px;
         font-size: 19px; }
-    .startpage .advantages img {
+    .startpage .advantages .img-crop {
+      overflow: hidden;
       border: 2px solid white;
-      border-radius: 5px; }
+      border-radius: 5px;
+      height: 465px; }
   .startpage .registert-now {
     padding: 50px; }
     .startpage .registert-now .btn {

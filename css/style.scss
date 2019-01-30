@@ -184,6 +184,9 @@ button {
       text-transform: capitalize;
     }
   }
+  .glyphicon {
+    margin-right:7px;
+  }
 }
 
 .main-menu {
@@ -330,9 +333,14 @@ button {
         font-size: 19px;
       }
     }
-    img {
+    .img-crop{
+      overflow: hidden;
       border: 2px solid white;
       border-radius: 5px;
+      height: 465px;
+      }
+    img {
+
     }
   }
   .registert-now{
