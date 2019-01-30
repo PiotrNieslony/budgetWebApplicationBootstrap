@@ -37,6 +37,9 @@ switch($action):
   case 'start';
     include 'templates/startpage.php';
     break;
+  case 'edit-user-data';
+    $budget->editUserData();
+    break;
   case 'edit-income-modal';
     $budget->editIncome();
     break;
@@ -81,6 +84,12 @@ switch($action):
     break;
   case 'load-piece-of-page';
     $budget->loadPieceOfPage();
+    break;
+  case 'dellete-all-user-items';
+    $budget->deleteAllUserItems();
+    break;
+  case 'dellete-user-account';
+    $budget->deleteUserAccount();
     break;
   default;
     include 'templates/mainTemplate.php';

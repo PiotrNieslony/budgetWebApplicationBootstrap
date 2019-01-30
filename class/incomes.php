@@ -149,7 +149,7 @@ class Incomes {
 
   public function showIncoms($balaceDateFrom, $balaceDateTo) {
     $userID = $_SESSION['loggedUser']['id'];
-    $queryIncoms = $this->db->query("SELECT ipcatu.id AS id, icatu.name AS category, SUM(incomes.amount) AS amount
+    $queryIncoms = $this->db->query("SELECT ipcatu.id AS id, ipcatu.name AS category, SUM(incomes.amount) AS amount
                     FROM incomes
                     INNER JOIN incomes_category_assigned_to_users icatu
                     ON incomes.income_category_assigned_to_user_id = icatu.id
@@ -469,5 +469,17 @@ class Incomes {
         echo json_encode($errors);
       }
     }
+  }
+
+  public function deleteAllUserItems(){
+    $userID = $_SESSION['loggedUser']['id'];
+    $sql    = "DELETE FROM incomes WHERE user_id = $userID";
+    $this->db->query($sql);
+  }
+
+  public function deleteAllUserCategory(){
+    $userID = $_SESSION['loggedUser']['id'];
+    $sql    = "DELETE FROM incomes_category_assigned_to_users WHERE user_id = $userID";
+    $this->db->query($sql);
   }
 }

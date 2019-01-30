@@ -1,7 +1,7 @@
 <?php
 class Expenses {
   private $db = null;
-  function __construct($db){
+  public function __construct($db){
     $this->db = $db;
   }
 
@@ -214,35 +214,17 @@ class Expenses {
   }
 
   public function addPaymentMethod(){
-    $validationCorrect = true;
     $paymentMethodName = $_POST['paymentMethod'];
-    $errors = array();
-    if((strlen($paymentMethodName)<1) || ((strlen($paymentMethodName)>25))) {
-      $validationCorrect = false;
-      $errors['e_paymentMethod'] = "Nazwa musi posiadać od 1 do 25 znaków.";
-    }
+    $validation = $this->validatePaymentMethodName($paymentMethodName);
 
-    $query = $this->db->prepare('SELECT name FROM payment_methods_assigned_to_users
-                                WHERE user_id = :user_id AND name = :payment_method_name ');
-    $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
-    $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
-    $query->execute();
-
-    if($query->rowCount() > 0){
-      $validationCorrect = false;
-      $errors['e_paymentMethod'] = "Metoda płatności o takiej nazwie już istnieje";
-    }
-
-
-    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
-    if($validationCorrect){
+    if($validation['validationCorrect']){
       $query = $this->db->prepare('INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :payment_method_name)');
       $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
       $query->bindValue(':payment_method_name', $paymentMethodName,  PDO::PARAM_STR);
       $query->execute();
       echo json_encode(array("ok"));
     } else {
-      echo json_encode($errors);
+      echo json_encode($validation['errors']);
     }
   }
 
@@ -251,7 +233,6 @@ class Expenses {
     $paymentMethodName = $_POST['paymentName'];
     $validation = $this->validatePaymentMethodName($paymentMethodName);
 
-    //$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, $userID, $paymentMethodName)";
     if($validation['validationCorrect']){
       $query = $this->db->prepare('UPDATE payment_methods_assigned_to_users SET name = :payment_method_name
                                   WHERE user_id = :user_id AND id = :id');
@@ -621,5 +602,23 @@ class Expenses {
         echo json_encode($errors);
       }
     }
+  }
+
+  public function deleteAllUserItems(){
+    $userID = $_SESSION['loggedUser']['id'];
+    $sql    = "DELETE FROM expenses WHERE user_id = $userID";
+    $this->db->query($sql);
+  }
+
+  public function deleteAllUserCategory(){
+    $userID = $_SESSION['loggedUser']['id'];
+    $sql    = "DELETE FROM expenses_category_assigned_to_users WHERE user_id = $userID";
+    $this->db->query($sql);
+  }
+
+  public function deleteAllUserPaymentMethod(){
+    $userID = $_SESSION['loggedUser']['id'];
+    $sql    = "DELETE FROM payment_methods_assigned_to_users WHERE user_id = $userID";
+    $this->db->query($sql);
   }
 }

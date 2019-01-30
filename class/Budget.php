@@ -33,167 +33,35 @@ class Budget {
   }
 
   public function login(){
-    if(isset($_SESSION['loggedUser']['id'])) return true;
-    if(!isset($_POST['inputLogin'])) return false;
-    $login = $_POST['inputLogin'];
-    $pass = $_POST['inputPassword'];
-    $query = $this->db->prepare('SELECT id, username, password FROM users WHERE username = :username');
-    $query->bindValue(':username', $login);
-    $query->execute();
-    $user = $query->fetch();
-    if((strtolower($login) == strtolower($user['username'])) && password_verify($pass, $user['password'])){
-        $_SESSION['loggedUser']['id'] = $user['id'];
-        $_SESSION['loggedUser']['username'] = $user['username'];
-        return true;
-    } else {
-        $_SESSION['eWrongData'] = "Niepoprawny login lub hasło.";
-        return false;
-    }
+    $users = new Users ($this->db);
+    return $users->login();
   }
 
   public function logout(){
-    if(isset($_SESSION['loggedUser'])) {
-      unset($_SESSION['loggedUser']);
-    }
-  }
-
-  private function copyCategoryFromDefault($catType, $userID){
-    $defaultTableName  = $catType."_category_default";
-    $categoryTableName = $catType."_category_assigned_to_users";
-    $query = $this->db->query("SELECT * FROM $defaultTableName");
-    $query->execute();
-    $defaultCategorys = $query->fetchAll();
-    foreach($defaultCategorys as $category){
-      $categoryName  = $category['name'];
-    $this->db->query("INSERT INTO $categoryTableName
-                       VALUES (NULL, $userID , NULL, '$categoryName')");
-      $lastID = $this->db->getSingleValue("SELECT MAX(id) FROM $categoryTableName
-                                          WHERE user_id = $userID");
-      if($category['parent_category_id'] == $category['id']){
-        $id = $lastID;
-      } else {
-        $parentCategoryName = "";
-        foreach($defaultCategorys as $category2){
-          if($category2['id'] == $category['parent_category_id'] ){
-            $parentCategoryName = $category2['name'];
-            break;
-          }
-        }
-        $id = $this->db->getSingleValue("SELECT id FROM $categoryTableName
-                                        WHERE user_id = $userID
-                                        AND name = '$parentCategoryName'
-                                        AND parent_category_id = id");
-      }
-      $this->db->query("UPDATE $categoryTableName
-                        SET parent_category_id = $id
-                        WHERE id = $lastID ");
-   }
-
+    $users = new Users ($this->db);
+    return $users->logout();
   }
 
   public function register(){
-    if(!isset($_POST['inputLogin'])) return false;
-    //Validation
-    $validation = true;
+    $users = new Users ($this->db);
+    return $users->register();
+  }
 
-    //check login name
-    $login = $_POST['inputLogin'];
+  public function editUserData(){
+    $users = new Users ($this->db);
+    switch($_POST['operation']):
+      case 'editUserData' :
+        return $users->editUserData();
+        break;
+      case 'editUserPassword' :
+        $users->changPassword();
+        break;
+    endswitch;
+  }
 
-    if((strlen($login)<3) || ((strlen($login)>20))) {
-        $validation = false;
-        $_SESSION['e_login'] = "Login musi posiadać od 3 do 20 znaków.";
-    }
-
-    if(ctype_alnum($login) == false){
-        $validation = false;
-        $_SESSION['e_login'] = "Nick może składać się tylko z liter i cyfr (bez polskich znaków).";
-    }
-
-    if (!isset($_SESSION['e_login'])){
-        $query = $this->db->prepare('SELECT id FROM users WHERE username = :username');
-        $query->bindValue(':username', $login, PDO::PARAM_STR);
-        $query->execute();
-        if($query->rowCount()){
-            $validation = false;
-            $_SESSION['e_login'] = "Ten login jest już zajęty.";
-        }
-    }
-
-    //check email
-    $email = $_POST['inputEmail'];
-    if($email != ''){
-      $emailB = filter_var($email, FILTER_SANITIZE_EMAIL);
-
-      if((filter_var($emailB, FILTER_VALIDATE_EMAIL)) == false || ($emailB != $email)){
-          $validation = false;
-          $_SESSION['e_email'] = "Podaj poprawny adres email.";
-      } else {
-          $query = $this->db->prepare('SELECT id FROM users WHERE email = :email');
-          $query->bindValue(':email', $email, PDO::PARAM_STR);
-          $query->execute();
-          if($query->rowCount()){
-              $validation = false;
-              $_SESSION['e_email'] = "Ten adres  email został już użyty do rejestracji konta.";
-          }
-      }
-    }
-
-    //Check the correctness of the password
-    $pass1 = $_POST['inputPassword1'];
-    $pass2 = $_POST['inputPassword2'];
-
-    if((strlen($pass1)<8) || (strlen($pass1)>20)){
-        $validation = false;
-        $_SESSION['e_pass'] = "Haslo musi posiadać od 8 do 20 znaków.";
-    }
-
-    if($pass1 != $pass2){
-        $validation = false;
-        $_SESSION['e_pass'] = "Podane hasła nie są identyczne.";
-    }
-
-    //Check regulamin checkbox
-    if(!isset($_POST['akceptTerms'])){
-        $validation = false;
-        $_SESSION['e_terms'] = "Potwierdź akceptację regulaminu.";
-    }
-
-    //Remember the entered data
-    if($validation == false){
-        $_SESSION['typedLogin'] = $login;
-        $_SESSION['typedEmail'] = $email;
-        $_SESSION['typedPass1'] = $pass1;
-        $_SESSION['typedPass2'] = $pass2;
-        $_SESSION['akceptTerms'] = $_POST['akceptTerms'];
-
-    }
-
-    if($validation) {
-        $_SESSION['typedLogin'] = $login;
-        $pass_hash = password_hash($pass1, PASSWORD_DEFAULT);
-        $query = $this->db->prepare('INSERT INTO users VALUES (NULL, :username, :password, :email)');
-        $query->bindValue(':username', $login, PDO::PARAM_STR);
-        $query->bindValue(':password', $pass_hash , PDO::PARAM_STR);
-        $query->bindValue(':email', $email, PDO::PARAM_STR);
-        $query->execute();
-        $userID = $this->db->getSingleValue("SELECT id FROM users WHERE username = '$login'");
-
-        $this->copyCategoryFromDefault("expenses", $userID);
-        $this->copyCategoryFromDefault("incomes", $userID);
-
-        $addPaymentMethods = "INSERT INTO payment_methods_assigned_to_users(user_id, name)
-                                SELECT users.id, pd.name
-                                FROM users
-                                INNER JOIN
-                                payment_methods_default pd
-                                where users.username = '$login';";
-
-
-        $this->db->query($addPaymentMethods);
-        header('Location: registration-confirm.php');
-        return true;
-    }
-    return false;
+  public function getLeggedUserEmail(){
+    $users = new Users ($this->db);
+    return $users->getEmailAdress();
   }
 
   public function addIncome(){
@@ -249,6 +117,8 @@ class Budget {
                 <button class=\"btn btn-xs btn-primary edit\">
                   <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
                 </button>";
+        if(count(array_keys(array_column($categoryArray,'parent_category_id' ),$category[1])) > 1)
+          echo "<span class=\"glyphicon glyphicon-chevron-up\" ></span>";
         echo    "</label>
               </div>";
       if($where == 'addSubcategory') continue;
@@ -432,8 +302,39 @@ class Budget {
     return $pathCall;
   }
 
+  public function deleteAllUserItems(){
+    $users   = new Users ($this->db);
+    $incomes = new Incomes($this->db);
+    $expense = new Expenses($this->db);
+    if($users->checkPassword($_POST['pass'])){
+      $incomes->deleteAllUserItems();
+      $expense->deleteAllUserItems();
+      echo json_encode(array('ok'));
+    } else {
+      echo json_encode(array('e_wrong_pass' => "Błędne hasło."));
+    }
+  }
+
+  public function deleteUserAccount(){
+    $users   = new Users ($this->db);
+    $incomes = new Incomes($this->db);
+    $expense = new Expenses($this->db);
+    if($users->checkPassword($_POST['pass'])){
+      $incomes->deleteAllUserItems();
+      $expense->deleteAllUserItems();
+      $incomes->deleteAllUserCategory();
+      $expense->deleteAllUserCategory();
+      $expense->deleteAllUserPaymentMethod();
+      $users->deleteUserAccount();
+      echo json_encode(array('ok'));
+    }else {
+      echo json_encode(array('e_wrong_pass' => "Błędne hasło."));
+    }
+  }
+
   public function test($name){
         $expenses = new Expenses($this->db);
         $expenses->validatePaymentMethodName($name);
   }
+
 }

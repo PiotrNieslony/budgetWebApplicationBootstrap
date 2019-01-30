@@ -1512,8 +1512,8 @@ pre {
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px; }
+  padding-left: 10px;
+  padding-right: 10px; }
   .container:before, .container:after {
     content: " ";
     display: table; }
@@ -1532,8 +1532,8 @@ pre {
 .container-fluid {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px; }
+  padding-left: 10px;
+  padding-right: 10px; }
   .container-fluid:before, .container-fluid:after {
     content: " ";
     display: table; }

@@ -293,6 +293,9 @@ if(sumOfIncomes > sumOfExpenses){
         "Wspaniale zarządzasz finansami. Posiadasz <strong>" +
         (round((sumOfIncomes -  sumOfExpenses),2)) +
         " zł</strong> wolnych środków. ";
+} else if(sumOfIncomes == sumOfExpenses ) {
+    message = "<strong>Ostrożnie!</strong><br />" +
+        "Twoje saldo wynosi<strong> 0 zł</strong>";
 } else {
     message = "<strong>Ostrożnie!</strong><br />" +
         "Wpadasz w dług. Twoje saldo to <strong>" +
