@@ -332,9 +332,4 @@ class Budget {
     }
   }
 
-  public function test($name){
-        $expenses = new Expenses($this->db);
-        $expenses->validatePaymentMethodName($name);
-  }
-
 }

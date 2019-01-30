@@ -21,6 +21,9 @@
             transform: rotate(180deg);
           }
         }
+        .glyphicon:first-child{
+          margin-right:10px;
+        }
       }
       .glyphicon-chevron-up{
         float:right;
