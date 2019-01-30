@@ -16,6 +16,14 @@
         width: 100%;
         height: 100%;
         display: block;
+        &.collapsed{
+          .glyphicon-chevron-up{
+            transform: rotate(180deg);
+          }
+        }
+      }
+      .glyphicon-chevron-up{
+        float:right;
       }
   }
 }

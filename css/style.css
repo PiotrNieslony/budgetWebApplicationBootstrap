@@ -65,6 +65,10 @@
   width: 100%;
   height: 100%;
   display: block; }
+  .settings .panel a[data-parent="#accordion"].collapsed .glyphicon-chevron-up {
+    transform: rotate(180deg); }
+.settings .panel .glyphicon-chevron-up {
+  float: right; }
 
 body {
   background: url("../img/intersection.png") #efefef;
@@ -74,7 +78,7 @@ body {
 
 button > span {
   float: left; }
-button.edit span, button.delete span {
+button.edit span, button.delete span, button.extend span {
   float: none; }
 
 /*** LOGO ***/
@@ -172,7 +176,7 @@ button.edit span, button.delete span {
 /*** MAIN VIEW ***/
 .content {
   background-color: #efefef;
-  margin: 10px 0 0 245px;
+  margin: 10px 0 0 230px;
   padding: 1% 3% 4%;
   -webkit-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
   -moz-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
@@ -188,7 +192,7 @@ button.edit span, button.delete span {
 .sidebar {
   width: 220px;
   background-color: rgba(240, 240, 240, 0.8);
-  margin: 20px 15px;
+  margin: 10px;
   padding: 0;
   border: 1px solid white;
   -webkit-box-shadow: 0px 0px 10px 5px rgba(204, 204, 204, 0.8);
@@ -200,7 +204,7 @@ button.edit span, button.delete span {
   z-index: 100;
   position: fixed;
   transition: all 0.5s ease-in-out;
-  top: 60px;
+  top: 72px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -266,8 +270,14 @@ button.edit span, button.delete span {
   .subCategory label {
     background-color: #ececec; }
 
-.form-group .radio.mainCategory label {
+.radio.mainCategory label {
   font-weight: bold; }
+.radio.mainCategory .glyphicon-chevron-up {
+  float: right;
+  transform: rotate(180deg); }
+.radio.mainCategory.active .glyphicon-chevron-up {
+  float: right;
+  transform: rotate(0deg); }
 
 /* Start page*/
 .startpage {
@@ -276,9 +286,10 @@ button.edit span, button.delete span {
     background-position: top;
     background-repeat: no-repeat;*/ }
   .startpage .header .btn {
-    margin-top: 10px;
+    margin-top: 23px;
     margin-bottom: 10px;
-    border-radius: 0; }
+    border-radius: 0;
+    position: relative; }
   .startpage .banner-container {
     background-color: #5A9697;
     background-image: url("../img/budget-bg.jpg");
@@ -393,6 +404,6 @@ button.edit span, button.delete span {
     margin-left: 15px; }
 
   .content {
-    margin: 5px; } }
+    margin: 0px; } }
 
 /*# sourceMappingURL=style.css.map */

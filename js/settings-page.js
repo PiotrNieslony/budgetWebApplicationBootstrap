@@ -178,6 +178,59 @@ $(".editPaymenttMethod button[type='submit']").click(function(){
   sendAjaxFromModal(".editPaymenttMethod", "index.php?action=modification-payment-method" , passingValue);
 });
 
+// EDIT USER DATA
+$('body').on("click", ".edit-user-data", function(){
+  prepareModal(".editUserData");
+  $('.editUserData').modal();
+})
+
+//EDIT USER DATA TO DB
+$(".editUserData button[type='submit']").click(function(){
+  passingValue.operation    = 'editUserData';
+  passingValue.inputLogin   = $('input[name="inputLogin"]').val()
+  passingValue.inputEmail   = $('input[name="inputEmail"]').val()
+  sendAjaxFromModal(".editUserData", "index.php?action=edit-user-data" , passingValue);
+});
+
+// EDIT USER PASSWORD
+$('body').on("click", ".edit-password", function(){
+  prepareModal(".editUserPassword");
+  $('.editUserPassword').modal();
+})
+
+//EDIT USER PASSWORD TO DB
+$(".editUserPassword button[type='submit']").click(function(){
+  passingValue.operation    = 'editUserPassword';
+  passingValue.oldPass      = $('input[name="oldPass"]').val()
+  passingValue.pass1        = $('input[name="pass1"]').val()
+  passingValue.pass2        = $('input[name="pass2"]').val()
+  sendAjaxFromModal(".editUserPassword", "index.php?action=edit-user-data" , passingValue);
+});
+
+// DELETE ALL USER ITEMS
+$('body').on("click", ".delete-all-user-item", function(){
+  prepareModal(".deleteAllUserItems");
+  $('.deleteAllUserItems').modal();
+})
+
+//EDIT USER PASSWORD TO DB
+$(".deleteAllUserItems button[type='submit']").click(function(){
+  passingValue.pass      = $('.deleteAllUserItems input[name="pass"]').val()
+  sendAjaxFromModal(".deleteAllUserItems", "index.php?action=dellete-all-user-items" , passingValue);
+});
+
+// DELETE USER ACCOUNT
+$('body').on("click", ".delete-account", function(){
+  prepareModal(".deleteUserAccount");
+  $('.deleteUserAccount').modal();
+})
+
+//DELETE USER ACCOUNT TO DB
+$(".deleteUserAccount button[type='submit']").click(function(){
+  passingValue.pass      = $('.deleteUserAccount input[name="pass"]').val()
+  sendAjaxFromModal(".deleteUserAccount", "index.php?action=dellete-user-account" , passingValue);
+});
+
 function isSubCategory(hook){
   var subcategoryClass  = hook.closest("div").parent("div").attr("class");
   var subCategory = false
@@ -215,15 +268,20 @@ function sendAjaxFromModal(modalForm, url, value){
     cache: false,
     success: function(data){
       console.log("ajax:"  + data);
+      console.dir(data);
       $(modalForm + " .alert.alert-danger").hide();
       if(data[0] == "ok"){
         $(modalForm + " .success-content").show();
         $(modalForm + " .proper-content").hide();
-        if(value.categoryType == 'income' || value.categoryType == 'expense') loadCategory(value.categoryType);
-        if(modalForm == '.addNewPayentMethod' || modalForm == '.deletePaymentMethod' ){
+        if(value.categoryType == 'income' ||
+           value.categoryType == 'expense') loadCategory(value.categoryType);
+        if(modalForm == '.addNewPayentMethod' ||
+          modalForm == '.deletePaymentMethod' ||
+          modalForm == '.editPaymenttMethod' ){
           passingValue.sectionName = 'listOfPayentMethod';
           loadPieceOfPage(passingValue);
         }
+        if(modalForm ==".editUserData") location.reload();
       } else {
         for(key in data){
           $("." + key).text(data[key]);
