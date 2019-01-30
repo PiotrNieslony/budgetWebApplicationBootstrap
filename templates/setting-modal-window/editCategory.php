@@ -19,12 +19,12 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row category-section">
             <div class="col-md-6">
               <button type="button" class="btn btn-primary  btn-block" data-toggle="collapse" data-target="#select-category">Zmień kategorię nadrzędną</button>
             </div>
             <div class="col-md-12">
-              <div class="form-group category-section">
+              <div class="form-group">
                 <div id="select-category" class="collapse">
                   <div class="category">
                   </div>
