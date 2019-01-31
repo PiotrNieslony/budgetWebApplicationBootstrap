@@ -11,14 +11,14 @@
       </div>
       <div class="modal-body proper-content">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Kwota</strong>
               <input name="incomeAmount" class="form-control" type="number" step="0.01"/>
               <p class='e_incomeAmount alert alert-danger' style="display:none;"></p>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <strong>Data</strong>
               <input  name="incomeDate" class="date form-control" type="text" placeholder="RRRR-MM-DD" required
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <div class="form-group">
               <strong>Kategoria</strong>
               <?php
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <strong>Komentarz:</strong>
             <input name="incomeComment" type="text" class="form-control" />
           </div>

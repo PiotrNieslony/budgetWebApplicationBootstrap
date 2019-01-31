@@ -7,8 +7,8 @@
 	<title>Budget</title>
 
 	<meta name="description" content="Opis w Google" />
-	<meta name="keywords" content="słowa, kluczowe, wypisane, po, porzecinku" />
-
+	<meta name="keywords" content="" />
+	<?php include "templates/favicon.php" ?>
 	<link rel="stylesheet" href="bootstrap/bootstrap.css" type="text/css" />
 	<link rel="stylesheet" href="fontello/fontello.css" type="text/css" />
 	<link rel="stylesheet" href="jquery/jquery-ui.min.css" type="text/css" />
