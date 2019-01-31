@@ -1,5 +1,6 @@
 .idea
 .gitignore
+config.php
 test.html
 .info/
 *.sql
