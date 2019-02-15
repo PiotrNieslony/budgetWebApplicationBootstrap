@@ -393,12 +393,28 @@ button {
     color:black;
   }
 }
-.limit-value{
-  margin: 5px -15px;
-  padding: 3px;
-  border-radius: 5px;
-  background-color: rgb(255, 255, 255);
-  color:black;
+.add-expense{
+  .limit-message-row{
+    p{
+      margin-bottom: 0;
+      font-weight: bold;
+      float:left;
+      margin-right: 5px;
+    }
+  }
+  .limit-value{
+    p{
+      margin-bottom: 0;
+      font-weight: bold;
+    }
+  }
+  .limit-value{
+    margin: 5px -15px;
+    padding: 3px;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 255);
+    color:black;
+  }
 }
 
 /*** BALANCE PAGE ***/
@@ -489,6 +505,14 @@ button {
       }
     }
   }
+  .limit-value{
+    p{
+      margin-bottom: 0;
+      font-weight: bold;
+      float:left;
+      margin-right: 5px;
+    }
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -502,4 +526,5 @@ button {
   .content {
     margin: 0px;
   }
+
 }

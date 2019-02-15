@@ -8,7 +8,7 @@ class ExpensesView{
 
   private function generateColor($amountOfSpent, $limit){
     $percentOfLimit    = ($amountOfSpent*100)/$limit;
-    $maxColorComponent = 230;
+    $maxColorComponent = 220;
 
     if($percentOfLimit < 100){
       $colorComponent = round(($percentOfLimit * $maxColorComponent)/100);
@@ -30,7 +30,7 @@ class ExpensesView{
     $passingValue = array();
 
     $passingValue['HowManySpentInCategory'] = $expenses->checkHowManySpentInCategory();
-    $passingValue['HowManySpentInCategory'] +=  $_POST['amount'];
+    $passingValue['HowManySpentInCategoryPlusTypedAmount'] = $passingValue['HowManySpentInCategory'] + $_POST['amount'];
     $passingValue['amountOfCategoryLimit']  = $expenses->getCategoryLimitManager();
     if(is_null($expenses->getAmountOfCategoryLimit($_POST['category']))){
       $passingValue['categoryName']         = $expenses->getMainCategoryName($_POST['category']);
@@ -55,6 +55,7 @@ class ExpensesView{
       }
       $passingValue['exceedingLimitValue']    = number_format($passingValue['exceedingLimitValue'], 2, ',', ' ') ;
       $passingValue['HowManySpentInCategory'] = number_format(abs($passingValue['HowManySpentInCategory']), 2, ',', ' ');
+      $passingValue['HowManySpentInCategoryPlusTypedAmount'] = number_format(abs($passingValue['HowManySpentInCategoryPlusTypedAmount']), 2, ',', ' ');
       $passingValue['amountOfCategoryLimit']  = number_format(abs($passingValue['amountOfCategoryLimit']), 2, ',', ' ');
     } else {
       $passingValue['message'] = "Nie zadeklarowano miesięcznego limitu dla kategorii <strong>".$passingValue['categoryName']."</strong>";

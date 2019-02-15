@@ -2,30 +2,34 @@
 <header>
   <h1>Dodaj wydatek</h1>
 </header>
-<div>
+<div class="add-expense">
   <form role="form .form-horizontal" method="post">
     <div class="row">
       <div class="col-md-6">
         <?= (isset($_SESSION['success'])) ? "<p class=\"alert alert-success\">".$_SESSION['success']."</p>" : "";
         unset($_SESSION['success']); ?>
-        <div class="row">
+        <div class="row limit-message-row">
           <div class="col-md-12">
-            <strong>Informacja o limicie: </strong>
+            <p>Informacja o limicie: </p>
             <span class="limit-message">Wpisz kwotę</span>
           </div>
         </div>
         <div class="row limit-value" style="display: none;">
-          <div class="col-md-4">
-            <strong>Limit: </strong>
-            <span class="limit-amount">1300</span>
+          <div class="col-md-3">
+            <p>Limit: </p>
+            <span class="limit-amount"></span>
           </div>
-          <div class="col-md-4">
-            <strong>Wydano: </strong>
-            <span class="spent-amount">600</span>
+          <div class="col-md-3">
+            <p>Dotychcas wydano: </p>
+            <span class="spent-amount"></span>
           </div>
-          <div class="col-md-4">
-            <strong>Różnica: </strong>
-            <span class="limit-subtraction">700</span>
+          <div class="col-md-3">
+            <p>Różnica: </p>
+            <span class="limit-subtraction"></span>
+          </div>
+          <div class="col-md-3">
+            <p>Wydatki + wpisana kwota: </p>
+            <span class="spent-amount-plus-typed-amount"></span>
           </div>
         </div>
         <div class="row">

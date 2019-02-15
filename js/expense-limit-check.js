@@ -36,9 +36,26 @@ $('body').on( "change", 'input[name="categorys"]:checked', function(){
   }
 });
 
+$('body').on('submit', '.add-expense form', function(e){
+  if(obtainedValue['exceededLimit'] && !$('.modal').hasClass('in')){
+    e.preventDefault();
+    openModal(obtainedValue['message']);
+  }
+});
+
+$('body').on('submit', '.limitAlert', function(e){
+  e.preventDefault();
+  $('.add-expense form').submit();
+  console.log('jestem tu')
+});
+
 function openModal(message){
   $('.limitAlert .message').html(message);
   $('.limitAlert').modal();
+  $('input[name="exceeded-limit-remember"]').prop("checked", false);
+  $('.modal').on('shown.bs.modal', function (e) {
+
+    })
 }
 
 function sendData(){
@@ -62,8 +79,10 @@ function sendAjax(url, value){
       $('.limit-message').html(obtainedValue['message']);
       $('.limit-amount').html(obtainedValue['amountOfCategoryLimit']);
       $('.spent-amount').html(obtainedValue['HowManySpentInCategory']);
+      $('.spent-amount-plus-typed-amount')
+        .html(obtainedValue['HowManySpentInCategoryPlusTypedAmount']);
       $('.limit-subtraction').html(obtainedValue['exceedingLimitValue']);
-      $('.limit-value').css('background-color',obtainedValue['info-color'] )
+      $('.limit-value').css('background-color',obtainedValue['info-color'])
       if(obtainedValue['limitSet']) $('.limit-value').show(100);
       else $('.limit-value').hide(100);
     },
