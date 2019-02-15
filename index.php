@@ -53,10 +53,10 @@ switch($action):
     $budget->deleteExpense();
     break;
   case 'load-incomes';
-    echo $budget->showIncomes();
+    $budget->showIncomes();
     break;
   case 'load-expenses';
-    echo $budget->showExpenses();
+    $budget->showExpenses();
     break;
   case 'add-income-subcategory';
     $budget->addIncomeSubcategory();
@@ -91,6 +91,9 @@ switch($action):
   case 'dellete-user-account';
     $budget->deleteUserAccount();
     break;
+  case 'checkHowManySpentInCategoryAndLimit':
+    $budget->checkHowManySpentInCategoryAndLimit();
+    break;
   default;
     include 'templates/mainTemplate.php';
  endswitch;
@@ -98,6 +101,8 @@ switch($action):
 function classLoader($className){
   if(file_exists("class/$className.php")){
     require_once("class/$className.php");
+  } elseif (file_exists("class/view/$className.php")){
+    require_once("class/view/$className.php");
   } else {
     throw new Exception("Brak pliku z definicją klasy.");
   }

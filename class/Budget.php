@@ -94,6 +94,11 @@ class Budget {
     return $expenses->add();
   }
 
+  public function checkHowManySpentInCategoryAndLimit(){
+    $expensesView = new ExpensesView($this->db);
+    $expensesView->alertExceededCategoryLimit();
+  }
+
   public function editExpense(){
     $expenses = new Expenses($this->db);
     return $expenses->edit();
@@ -108,39 +113,71 @@ class Budget {
     foreach($categoryArray as $category){
       if($category[1] == $category[0]){
         echo "<div class=\"radio mainCategory\">
-                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />$category[2]
-                <span class='checkmark'></span>";
-        if($where == 'settings')
-        echo "<button class=\"btn btn-xs btn-danger delete\">
-                  <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
-                </button>
-                <button class=\"btn btn-xs btn-primary edit\">
-                  <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
-                </button>";
-        if(count(array_keys(array_column($categoryArray,'parent_category_id' ),$category[1])) > 1)
-          echo "<span class=\"glyphicon glyphicon-chevron-up\" ></span>";
-        echo    "</label>
+                <label><input type=\"radio\" name=\"categorys\" value=\"$category[0]\" />";
+         echo "<span class='checkmark'></span>";
+         if(count(array_keys(array_column($categoryArray,'parent_category_id' ),$category[1])) > 1)
+         echo "<span class=\"glyphicon glyphicon-chevron-up\" ></span>";
+         if($where == 'settings'){
+          echo "<button class=\"btn btn-xs btn-danger delete\">
+                    <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
+                  </button>
+                  <button class=\"btn btn-xs btn-primary edit\">
+                    <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
+                  </button>";
+          }
+        echo   "<p class='category-name'>$category[2]</p>";
+        $subCategory = $this->generateSubCategoryHTML($categoryArray, $where, $category[0]);
+        if(isset($category['limit_amount'])){
+          $limitAmount = number_format($category['limit_amount'], 2, ',', ' ');
+          $subcategoryAndMainCategorySumlimitAmount = number_format(($category['limit_amount'] + $subCategory['limiSum']), 2, ',', ' ');
+          if($subCategory['limiSum'] <= 0){
+            echo "Limit: <span class='categoryLimit'>".$subcategoryAndMainCategorySumlimitAmount."</span>";
+          } else {
+            echo "Limit: <span class='wholeCategoryLimit'>".$subcategoryAndMainCategorySumlimitAmount."</span>";
+            echo " (<span class='categoryLimit'>".$limitAmount."</span>)";
+          }
+
+        }
+        echo   "</label>
               </div>";
       if($where == 'addSubcategory') continue;
-        echo "<div class=\"subCategory\">";
-        foreach($categoryArray as $subCategory)
-            if($subCategory[1] == $category[0] && $subCategory[0] != $subCategory[1]){
-              echo "<div class=\"radio \">
-                      <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />$subCategory[2]
-                      <span class='checkmark'></span>";
-              if($where == 'settings')
-                echo "<button class=\"btn btn-xs btn-danger delete\">
-                        <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
-                      </button>
-                      <button class=\"btn btn-xs btn-primary edit\">
-                        <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
-                      </button>";
-              echo    "</label>
-                   </div>";
-            }
-        echo "</div>";
+        echo $subCategory['html'];
       }
     }
+  }
+
+  private function generateSubCategoryHTML($categoryArray, $where, $parentCategory){
+    $sumOfSubcategoryLimit = 0;
+    $html = "";
+    $html .= "<div class=\"subCategory\">";
+    foreach($categoryArray as $subCategory){
+        if($subCategory[1] == $parentCategory && $subCategory[0] != $subCategory[1]){
+          $html .= "<div class=\"radio \">
+                  <label><input type=\"radio\" name=\"categorys\" value=\"$subCategory[0]\" />
+                  <span class='checkmark'></span>";
+           if($where == 'settings'){
+            $html .= "<button class=\"btn btn-xs btn-danger delete\">
+                    <span class=\"glyphicon glyphicon glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>
+                  </button>
+                  <button class=\"btn btn-xs btn-primary edit\">
+                    <span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>
+                  </button>";
+             }
+           $html .= "<p class='category-name'>$subCategory[2]</p>";
+           if(isset($subCategory['limit_amount'])){
+             $sumOfSubcategoryLimit += $subCategory['limit_amount'];
+             $limitAmount = number_format($subCategory['limit_amount'], 2, ',', ' ');
+             $html .= "Limit: <span class='categoryLimit'>".$limitAmount."</span>";
+           }
+           $html .=    "</label>
+           </div>";
+        }
+      }
+    $html .= "</div>";
+    return array(
+      'html' => $html,
+      'limiSum' => $sumOfSubcategoryLimit
+    );
   }
 
   public function modificationOfPaymentMethod(){
@@ -172,9 +209,8 @@ class Budget {
   }
 
   public function showExpensCategory($where) {
-    $categoryQuery = $this->db->prepare('SELECT id, parent_category_id ,name FROM expenses_category_assigned_to_users WHERE user_id = :user_id');
-    $categoryQuery->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
-    $categoryQuery->execute();
+    $userId = $_SESSION['loggedUser']['id'];
+    $categoryQuery = $this->db->query("SELECT id, parent_category_id ,name, limit_amount FROM expenses_category_assigned_to_users WHERE user_id = $userId");
     $categorys = $categoryQuery->fetchAll();
     $this->generateCategoryHtml($categorys, $where);
     echo (isset($_SESSION['e_categorys'])) ? "<p class='alert alert-danger'>".$_SESSION['e_categorys']."</p>" : "";
@@ -282,10 +318,10 @@ class Budget {
   public function editCategory(){
     if($_POST['categoryType'] == "income"){
       $incomes = new Incomes($this->db);
-      return $incomes->editCategory();
+      $incomes->editCategory();
     } elseif ($_POST['categoryType'] == "expense") {
       $expense = new Expenses($this->db);
-      return $expense->editCategory();
+      $expense->editCategory();
     }
   }
 

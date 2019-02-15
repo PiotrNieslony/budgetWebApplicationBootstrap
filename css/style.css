@@ -72,6 +72,13 @@
 .settings .panel .glyphicon-chevron-up {
   float: right; }
 
+.editCategory .category-section button {
+  margin-top: 20px; }
+  .editCategory .category-section button .glyphicon-chevron-up {
+    float: right; }
+  .editCategory .category-section button.collapsed .glyphicon-chevron-up {
+    transform: rotate(180deg); }
+
 body {
   background: url("../img/intersection.png") #efefef;
   background-attachment: fixed;
@@ -270,18 +277,42 @@ button.edit span, button.delete span, button.extend span {
 
 .subCategory {
   display: none;
-  padding-left: 20px; }
+  padding-left: 20px;
+  color: grey;
+  font-size: 12px; }
   .subCategory label {
+    font-weight: bold;
     background-color: #ececec; }
+  .subCategory p {
+    font-size: 14px;
+    margin: 0;
+    color: #398182; }
+  .subCategory .subcategoryLimit {
+    font-weight: 400; }
 
-.radio.mainCategory label {
-  font-weight: bold; }
-.radio.mainCategory .glyphicon-chevron-up {
-  float: right;
-  transform: rotate(180deg); }
-.radio.mainCategory.active .glyphicon-chevron-up {
-  float: right;
-  transform: rotate(0deg); }
+.radio.mainCategory {
+  color: grey;
+  font-weight: 400;
+  font-size: 12px; }
+  .radio.mainCategory p {
+    font-size: 14px;
+    margin: 0;
+    color: #398182; }
+  .radio.mainCategory .categoryLimit,
+  .radio.mainCategory .subcategoryLimit {
+    font-size: 12px;
+    font-weight: 400; }
+  .radio.mainCategory label {
+    font-weight: bold; }
+  .radio.mainCategory .glyphicon-chevron-up {
+    font-size: 14px;
+    color: #398182;
+    float: right;
+    transform: rotate(180deg);
+    margin-left: 5px; }
+  .radio.mainCategory.active .glyphicon-chevron-up {
+    float: right;
+    transform: rotate(0deg); }
 
 /* Start page*/
 .startpage {
@@ -352,6 +383,17 @@ button.edit span, button.delete span, button.extend span {
 .add-income .btn, .add-expense .btn {
   margin-top: 15px; }
 
+.danger-alert-modal .modal-content {
+  background-color: #fccece;
+  color: black; }
+
+.limit-value {
+  margin: 5px -15px;
+  padding: 3px;
+  border-radius: 5px;
+  background-color: white;
+  color: black; }
+
 /*** BALANCE PAGE ***/
 #summary-message {
   margin-top: 208px;
@@ -366,6 +408,16 @@ button.edit span, button.delete span, button.extend span {
   .table thead {
     background-color: #398182;
     color: white; }
+  .table td:nth-child(1) {
+    text-align: right; }
+  .table td:nth-child(3) {
+    text-align: right; }
+  .table tfoot {
+    font-weight: bold; }
+    .table tfoot td:nth-child(2) {
+      text-align: right; }
+    .table tfoot td:nth-child(1) {
+      text-align: left; }
   .table .table thead {
     background-color: #224c4d;
     color: white; }

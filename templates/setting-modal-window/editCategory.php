@@ -15,13 +15,29 @@
               <div class="form-group">
                 <strong>Nazwa kategorii</strong>
                 <input name="categoryName" class="form-control" type="text" />
-                <p class='e_categoryName alert alert-danger' style="display:none;"></p>
+                <p class='e_categoryName e_db alert alert-danger' style="display:none;"></p>
               </div>
+            </div>
+          </div>
+          <div class="row limit-sction">
+            <div class="col-md-6">
+              <label><input name="disableLimit" type="checkbox" value=""> Włącz limit dla kategorii</label>
+              <p class='e_disableLimit alert alert-danger' style="display:none;"></p>
+            </div>
+          </div>
+          <div class="row limit-sction">
+            <div class="col-md-6">
+              <strong>Ustaw miesięczny limit wydatków dla kategorii.</strong>
+              <input name="categoryLimit" class="form-control" type="number" />
+              <p class='e_categoryLimit alert alert-danger' style="display:none;"></p>
             </div>
           </div>
           <div class="row category-section">
             <div class="col-md-6">
-              <button type="button" class="btn btn-primary  btn-block" data-toggle="collapse" data-target="#select-category">Zmień kategorię nadrzędną</button>
+              <button type="button" class="btn btn-primary btn-block collapsed" data-toggle="collapse" data-target="#select-category">
+                Zmień kategorię nadrzędną
+                <span class="glyphicon glyphicon-chevron-up" ></span>
+              </button>
             </div>
             <div class="col-md-12">
               <div class="form-group">

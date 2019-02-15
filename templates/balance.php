@@ -48,20 +48,9 @@ $budget->setBalanceDateToSession();
     <div class="
       col-lg-9 col-lg-pull-3
       col-md-7 col-md-pull-5">
-      <div class="budget-table incomes-table2">
+      <div class="budget-table incomes-table">
         <table class="table table-bordered table-striped table-hover">
-          <caption>Tabela przychodów</caption>
-          <thead>
-            <tr>
-              <th>l.p.</th>
-              <th>Kategoria</th>
-              <th>Wartość</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
             <?php $incomes = $budget->showIncomes();?>
-          </tbody>
         </table>
       </div>
     </div>
@@ -80,20 +69,9 @@ $budget->setBalanceDateToSession();
   <div class="
     col-lg-9 col-lg-pull-3
     col-md-7 col-md-pull-5">
-    <div class="budget-table expeses-table2">
+    <div class="budget-table expeses-table">
       <table class="table table-striped table-bordered table-hover">
-        <caption>Tabela wydatków</caption>
-        <thead>
-          <tr>
-            <th>l.p.</th>
-            <th>Kategoria</th>
-            <th>Wartość</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php $expenses = $budget->showExpenses();?>
-        </tbody>
+        <?php $expenses = $budget->showExpenses();?>
       </table>
     </div>
   </div>

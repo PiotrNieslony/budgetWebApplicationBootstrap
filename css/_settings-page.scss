@@ -4,6 +4,13 @@
     button{
       float: right;
       margin-left: 5px;
+      &.delete{
+      //  right:25px;
+      }
+      &.edit{
+      //  right:55px;
+
+      }
     }
   }
   .row{
@@ -28,5 +35,21 @@
       .glyphicon-chevron-up{
         float:right;
       }
+  }
+}
+
+.editCategory {
+  .category-section{
+    button{
+      margin-top:20px;
+      .glyphicon-chevron-up{
+        float:right;
+      }
+      &.collapsed{
+        .glyphicon-chevron-up{
+          transform: rotate(180deg);
+        }
+      }
+    }
   }
 }

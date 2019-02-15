@@ -19,7 +19,7 @@ $('body').on('click', '.table tr td .extend',function(){
 })
 
 //EDIT INCOME MODAL
-$('body').on('click','.incomes-table2 .table tr td .edit', function(){
+$('body').on('click','.incomes-table .table tr td .edit', function(){
   $(".editIncomeModal .success-content").hide();
   $(".editIncomeModal .proper-content").show();
   $(".editIncomeModal .alert.alert-danger").hide();
@@ -27,6 +27,7 @@ $('body').on('click','.incomes-table2 .table tr td .edit', function(){
   var counter = 0;
   $(this).closest('tr').find('td').each(function(index, element){
     if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 2) obtainedValues.push(stringToFloat($( this ).text()));
     else if(counter == 4) obtainedValues.push(
       $( this ).closest('table').closest('tr').prev().attr('id')
     );
@@ -80,7 +81,7 @@ $(".editIncomeModal button[type='submit']").click(function(){
 });
 
 //DELETE INCOME MODAL
-$('body').on('click','.incomes-table2 .table tr td .delete', function(){
+$('body').on('click','.incomes-table .table tr td .delete', function(){
   $(".deleteIncomeModal .success-content").hide();
   $(".deleteIncomeModal .proper-content").show();
   $(".deleteIncomeModal .alert.alert-danger").hide();
@@ -128,7 +129,7 @@ $(".deleteIncomeModal button[type='submit']").click(function(){
 });
 
 //EDIT EXPENSE MODAL
-$('body').on('click','.expeses-table2 .table tr td .edit', function(){
+$('body').on('click','.expeses-table .table tr td .edit', function(){
   $(".editExpenseModal .success-content").hide();
   $(".editExpenseModal .proper-content").show();
   $(".editExpenseModal .alert.alert-danger").hide();
@@ -136,6 +137,7 @@ $('body').on('click','.expeses-table2 .table tr td .edit', function(){
   var counter = 0;
   $(this).closest('tr').find('td').each(function(index, element){
     if(counter == 0) obtainedValues.push($( this ).closest('tr').attr('id'));
+    else if(counter == 3) obtainedValues.push(stringToFloat($( this ).text()));
     else if(counter == 5) obtainedValues.push(
       $( this ).closest('table').closest('tr').prev().attr('id')
     );
@@ -190,7 +192,7 @@ $(".editExpenseModal button[type='submit']").click(function(){
 });
 
 //DELETE EXPENSE MODAL
-$('body').on('click','.expeses-table2 .table tr td .delete', function(){
+$('body').on('click','.expeses-table .table tr td .delete', function(){
   $(".deleteExpenseModal .success-content").hide();
   $(".deleteExpenseModal .proper-content").show();
   $(".deleteExpenseModal .alert.alert-danger").hide();
@@ -244,7 +246,7 @@ function loadIncomes(){
     dataType: "html",
     cache: false,
     success: function(data){
-      $(".incomes-table2 tbody").html(data);
+      $(".incomes-table table").html(data);
     },
     error: function(msg){
       console.log('Exception:', msg);
@@ -260,7 +262,7 @@ function loadExpenses(){
     dataType: "html",
     cache: false,
     success: function(data){
-      $(".expeses-table2 tbody").html(data);
+      $(".expeses-table table").html(data);
     },
     error: function(msg){
       console.log('Exception:', msg);
@@ -288,23 +290,44 @@ function round(value, precision) {
 
 //////// GUDGET MESSAGE ///////
 var message = "";
+var balance = round((sumOfIncomes -  sumOfExpenses),2);
+
 if(sumOfIncomes > sumOfExpenses){
     message = "<strong>Gratulacje!</strong><br />" +
-        "Wspaniale zarządzasz finansami. Posiadasz <strong>" +
-        (round((sumOfIncomes -  sumOfExpenses),2)) +
-        " zł</strong> wolnych środków. ";
+        "Wspaniale zarządzasz finansami! Posiadasz <strong>" +
+        (numberFormat(balance, " ")) +
+        " zł</strong> wolnych środków ";
 } else if(sumOfIncomes == sumOfExpenses ) {
     message = "<strong>Ostrożnie!</strong><br />" +
         "Twoje saldo wynosi<strong> 0 zł</strong>";
 } else {
     message = "<strong>Ostrożnie!</strong><br />" +
         "Wpadasz w dług. Twoje saldo to <strong>" +
-        (round((sumOfIncomes -  sumOfExpenses),2)) +
-        " zł</strong>.";
+        (numberFormat(balance, " ")) + "," +
+        " zł</strong>";
 }
 
 $("#summary-message").html(message);
 
+function numberFormat(_number, _sep) {
+    _number = typeof _number != "undefined" ? _number : "";
+    var negativNumber = _number < 0 ? true : false;
+    _number =  _number.toString()
+    if(negativNumber) _number = _number.substr(1);
+    _number = _number.replace(new RegExp("^(\\d{" + (_number.length%3? _number.length%3:0) + "})(\\d{3})", "g"), "$1 $2").replace(/(\d{3})+?/gi, "$1 ").trim();
+    if(typeof _sep != "undefined" && _sep != " ") {
+        _number = _number.replace(/\s/g, _sep);
+    }
+    _number = _number.replace(' .', ',');
+    if(negativNumber) _number = "-" + _number;
+    return _number;
+}
+
+function stringToFloat(_string){
+  _string = _string.replace(',', '.');
+  _string = _string.replace(' ', '');
+  return _string
+}
 //////// PIE CHART ////////
 //////// Load google charts
 

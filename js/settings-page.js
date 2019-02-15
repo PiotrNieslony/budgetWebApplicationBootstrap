@@ -92,21 +92,51 @@ $(".deleteCategory button[type='submit']").click(function(){
 
 // EDIT CATEGORY MODAL
 $('body').on("click", ".category .edit", function(){
+  var categoryLimit        = $(this).siblings(".categoryLimit").text();
+  categoryLimit            = stringToFloat(categoryLimit);
+  if($(this).siblings().hasClass("categoryLimit")){
+    $(".editCategory input[name='disableLimit']").prop("checked", true)
+    $(".editCategory input[name='categoryLimit']").prop("disabled", false);
+    $(".editCategory input[name='categoryLimit']").val(categoryLimit);
+  } else{
+    $(".editCategory input[name='disableLimit']").prop("checked", false)
+    $(".editCategory input[name='categoryLimit']").prop("disabled", true);
+    $(".editCategory input[name='categoryLimit']").val("");
+  }
+  $('body').on("change",".editCategory input[name='disableLimit']", function(){
+    if($(".editCategory input[name='disableLimit']").is(":checked")){
+      $(".editCategory input[name='categoryLimit']").prop("disabled", false);
+      $(".editCategory input[name='categoryLimit']").val(categoryLimit);
+      $(".editCategory input[name='categoryLimit']").focus();
+    } else {
+      $(".editCategory input[name='categoryLimit']").prop("disabled", true);
+      $(".editCategory input[name='categoryLimit']").val("");
+    }
+  });
   var categoryID           = $(this).siblings('input').val();
-  var categoryName         = $.trim($(this).parent().text());
+  var categoryName         = $.trim($(this).parent().find('.category-name').text());
   var subcategoryClass     = $(this).closest("div").parent("div").attr("class");
-  var parentCategoryID       = $(this).closest(".subCategory").prev().find("input").val();
+  var parentCategoryID     = $(this).closest(".subCategory").prev().find("input").val();
   passingValue.parentCategoryID =parentCategoryID;
   passingValue.categoryID   = categoryID;
   passingValue.subCategory  = isSubCategory($(this));
   passingValue.categoryType = categoryType($(this));
   $('.editCategory').attr("id",categoryID);
   $('.editCategory input[name="categoryName"]').val(categoryName);
+
+  if(passingValue.categoryType == "expense"){
+    $(".limit-sction").show();
+  } else {
+    $(".limit-sction").hide();
+  }
+
   if(passingValue.subCategory) {
     $(".category-section").show();
     loadCategory(passingValue.categoryType, ".editCategory");
   }
-  else $(".category-section").hide();
+  else {
+    $(".category-section").hide();
+  }
   prepareModal(".editCategory");
   $('.editCategory').modal();
   $('.editCategory').on('shown.bs.modal', function () {
@@ -118,6 +148,10 @@ $('body').on("click", ".category .edit", function(){
 $('body').on("click", ".editCategory button[type='submit']", function(){
   passingValue.categoryName     = $('.editCategory input[name="categoryName"]').val();
   passingValue.parentCategoryID = $('.editCategory input[name="categorys"]:checked').val();
+  passingValue.categoryLimitEnable =
+    $(".editCategory input[name='disableLimit']").is(":checked");
+  passingValue.categoryLimit =
+    $(".editCategory input[name='categoryLimit']").val();
   sendAjaxFromModal(".editCategory", "index.php?action=edit-category" , passingValue);
 });
 
@@ -244,6 +278,12 @@ function categoryType(hook){
   if (categoryType > -1) categoryType = "income";
   else categoryType = "expense";
   return categoryType;
+}
+
+function stringToFloat(_string){
+  _string = _string.replace(',', '.');
+  _string = _string.replace(' ', '');
+  return _string
 }
 
 function prepareModal(modalWindowName){

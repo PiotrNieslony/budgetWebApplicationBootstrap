@@ -47,7 +47,7 @@ class Expenses {
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
         $query->bindValue(':expense_category_assigned_to_user_id', $_POST['categorys'] , PDO::PARAM_INT);
         $query->bindValue(':payment_method_assigned_to_user_id', $_POST['paymentType'], PDO::PARAM_INT);
-        $query->bindValue(':amount', $_POST['expenseAmount'],  PDO::PARAM_INT);
+        $query->bindValue(':amount', $_POST['expenseAmount'],  PDO::PARAM_STR);
         $query->bindValue(':date_of_expense', $_POST['expenseDate'],  PDO::PARAM_STR);
         $query->bindValue(':expense_comment', $_POST['expenseComment'],  PDO::PARAM_STR);
         $query->execute();
@@ -112,7 +112,7 @@ class Expenses {
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
         $query->bindValue(':expense_category_assigned_to_user_id', $_POST['categorys'] , PDO::PARAM_INT);
         $query->bindValue(':payment_method_assigned_to_user_id', $_POST['paymentType'], PDO::PARAM_INT);
-        $query->bindValue(':amount', $_POST['expenseAmount'],  PDO::PARAM_INT);
+        $query->bindValue(':amount', $_POST['expenseAmount'],  PDO::PARAM_STR);
         $query->bindValue(':date_of_expense', $_POST['expenseDate'],  PDO::PARAM_STR);
         $query->bindValue(':expense_comment', $_POST['expenseComment'],  PDO::PARAM_STR);
         $query->bindValue(':expenseID',  $_POST['expenseID'], PDO::PARAM_INT);
@@ -165,10 +165,22 @@ class Expenses {
     $counter = 1;
     $expenses = new Expenses($this->db);
     $sum = $expenses->sumExpenses($balaceDateFrom,$balaceDateTo);
+    $sum = number_format($sum, 2, ',', ' ');
     $subCategory;
+    echo "<caption>Tabela wydatków</caption>
+            <thead>
+              <tr>
+                <th>l.p.</th>
+                <th>Kategoria</th>
+                <th>Wartość</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>";
     foreach ($expensesArray as $expensRow) {
       echo "<tr id=\"$expensRow[0]\"><td>$counter</td>";
       $counter++;
+      $expensRow[2] = number_format($expensRow[2], 2, ',', ' ');
       for ($i = 1; $i < 3; $i++) {
           echo "<td>";
           echo $expensRow[$i];
@@ -182,7 +194,7 @@ class Expenses {
         echo "</td></tr>";
       }
     }
-    echo "<tr><td colspan=\"2\">Suma</td><th>$sum</th><td></td></tr>";
+    echo "</tbody><tfoot><tr><td colspan=\"2\">Suma</td><td>$sum</td><td></td></tr></tfoot>";
     $_SESSION['selected-date-from'] = $balaceDateFrom;
     $_SESSION['selected-date-to'] = $balaceDateTo;
     return $expensesArray;
@@ -278,6 +290,29 @@ class Expenses {
     return $paymentMethodQuery->fetchAll();
   }
 
+  public function getCategoryName($categoryID){
+    $sql = "SELECT name
+            FROM expenses_category_assigned_to_users
+            WHERE id = $categoryID;
+            ";
+    return $this->db->getSingleValue($sql);
+  }
+
+  public function getMainCategoryName($categoryID){
+     $sqlMainCategoryID= "SELECT parent_category_id
+            FROM expenses_category_assigned_to_users
+            WHERE id = $categoryID;
+            ";
+
+    $mainCategoryID = $this->db->getSingleValue($sqlMainCategoryID);
+
+    $sqlMainCategoryName = "SELECT name
+            FROM expenses_category_assigned_to_users
+            WHERE id = $mainCategoryID;
+            ";
+    return $this->db->getSingleValue($sqlMainCategoryName);
+  }
+
   public function showExpensPaymentMethod() {
     $paymentMethods = $this->getPaymentMethod();
     foreach($paymentMethods as $paymentMethod){
@@ -343,11 +378,12 @@ class Expenses {
       if($expensRow[0] == $parentCategoryId) $expensRow[1] = "inne";
       $subTable .=  "<tr id=\"$expensRow[0]\"><td>$counter</td>";
       $counter++;
+      $sum += $expensRow[2];
+      $expensRow[2] = number_format($expensRow[2], 2, ',', ' ');
       for ($i = 1; $i < 3; $i++) {
           $subTable .=  "<td>";
           $subTable .=  $expensRow[$i];
           $subTable .=  "</td>";
-          $sum += $expensRow[2];
       }
       $subTable .= "<td><button class=\"btn btn-xs btn-info extend\"><span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span></button></td>";
       $subTable .=  "</tr>";
@@ -385,6 +421,7 @@ class Expenses {
     foreach ($expenses as $expensRow) {
       $counter++;
       $subTable .=  "<tr id=\"$expensRow[0]\"><td>$counter</td>";
+      $expensRow[3] = number_format($expensRow[3], 2, ',', ' ');
       for ($i = 1; $i < 5; $i++) {
           if($i == 4) $subTable .=  "<td class=\"visible-sm visible-md visible-lg\">";
           else $subTable .=  "<td>";
@@ -447,7 +484,8 @@ class Expenses {
                                       NULL,
                                       :user_id,
                                       :parent_category_id,
-                                      :category_name
+                                      :category_name,
+                                      NULL
                                       )
                                     ');
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
@@ -500,7 +538,7 @@ class Expenses {
     if($validationCorrect){
       try{
         $query = $this->db->prepare('INSERT INTO expenses_category_assigned_to_users
-                                      SELECT (MAX(id)+1), :user_id , (MAX(id)+1), :category_name
+                                      SELECT (MAX(id)+1), :user_id , (MAX(id)+1), :category_name , NULL
                                       FROM expenses_category_assigned_to_users
                                     ');
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
@@ -558,49 +596,81 @@ class Expenses {
   public function editCategory(){
     $categoryID       = $_POST['categoryID'];
     $subCategory      = $_POST['subCategory'];
-    $categoryName          = $_POST['categoryName'];
+    $categoryName     = $_POST['categoryName'];
     if(isset($_POST['parentCategoryID']))
       $parentCategoryID = $_POST['parentCategoryID'];
     else
       $parentCategoryID = $categoryID;
     $userID           = $_SESSION['loggedUser']['id'];
+    $validationCorrect = true;
     $errors           = array();
-    if($subCategory){
-      try{
-        $query = $this->db->prepare(
-              "UPDATE expenses_category_assigned_to_users
-              SET
-              parent_category_id = :parentCategoryID,
-              name               = :categoryName
-              WHERE id  = :category_id AND user_id = :user_id");
-        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
-        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
-        $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
-        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
-        $query->execute();
-        $output = array('ok');
-        echo json_encode($output);
-      } catch(Exception $e){
-        $error['e_db'] = $e->getMessage();
-        echo json_encode($errors);
-      }
+
+    //Category name validation
+    if((strlen($categoryName)<1) || ((strlen($categoryName)>25))) {
+      $validationCorrect = false;
+      $errors['e_categoryName'] = "Nazwa kategorii musi posiadać od 1 do 25 znaków.";
+    }
+
+    //Category limit validation
+    if($_POST['categoryLimitEnable'] == "true"){
+        //amount limit validation
+        if(!is_numeric($_POST['categoryLimit'])){
+            $validationCorrect = false;
+            $errors['e_categoryLimit'] = "Wpisz poprawną kwotę (liczba)";
+        } else if($_POST['categoryLimit'] > 999999.99 || $_POST['categoryLimit'] < 0 ){
+            $validationCorrect = false;
+            $errors['e_categoryLimit'] = "Wprowadź poprawną kwotę (od 0 dd 999 999.99)";
+        } else {
+           $limitAmount = $_POST['categoryLimit'];
+        }
     } else {
-      try{
-        $query = $this->db->prepare(
+      $limitAmount = NULL;
+    }
+
+    if($validationCorrect){
+      if($subCategory == "true"){
+        try{
+          $query = $this->db->prepare(
+            "UPDATE expenses_category_assigned_to_users
+            SET
+            parent_category_id = :parentCategoryID,
+            name               = :categoryName,
+            limit_amount       = :limitAmount
+            WHERE id  = :category_id AND user_id = :user_id");
+            $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+            $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+            $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
+            $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+            $query->bindValue(':limitAmount', $limitAmount,  PDO::PARAM_STR);
+            $query->execute();
+            $output = array('ok');
+            echo json_encode($output);
+          } catch(Exception $e){
+            $error['e_db'] = $e->getMessage();
+            echo json_encode($errors);
+          }
+        } else {
+          try{
+            $query = $this->db->prepare(
               "UPDATE expenses_category_assigned_to_users
               SET
-              name               = :categoryName
+              name               = :categoryName,
+              limit_amount       = :limitAmount
               WHERE id  = :category_id AND user_id = :user_id");
-        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
-        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
-        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
-        $query->execute();
-        $output = array('ok');
-        echo json_encode($output);
-      } catch(Exception $e){
-        $error['e_db'] = $e->getMessage();
-        echo json_encode($errors);
-      }
+              $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+              $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+              $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+              $query->bindValue(':limitAmount', $limitAmount,  PDO::PARAM_STR);
+              $query->execute();
+              $output = array('ok');
+              echo json_encode($output);
+            } catch(Exception $e){
+              $error['e_db'] = $e->getMessage();
+              echo json_encode($errors);
+            }
+          }
+    } else {
+      echo json_encode($errors);
     }
   }
 
@@ -621,4 +691,147 @@ class Expenses {
     $sql    = "DELETE FROM payment_methods_assigned_to_users WHERE user_id = $userID";
     $this->db->query($sql);
   }
-}
+
+  private function checkIfMainCategory($categoryID){
+    $userId = $_SESSION['loggedUser']['id'];
+    $sqlCheckIfMainCategory = "SELECT id
+                      FROM expenses_category_assigned_to_users
+                      WHERE user_id = $userId
+                      AND id = $categoryID
+                      AND id = parent_category_id";
+    if($this->db->getSingleValue($sqlCheckIfMainCategory))
+      return true;
+    else
+      return false;
+  }
+
+  private function getMainCategoryForSubcategory($subcategoryID){
+    $userId = $_SESSION['loggedUser']['id'];
+    $sqlMainCategory = "SELECT parent_category_id
+                      FROM expenses_category_assigned_to_users
+                      WHERE user_id = $userId
+                      AND id = $subcategoryID";
+    return $mainCategory = $this->db->getSingleValue($sqlMainCategory);
+  }
+
+  public function checkHowManySpentInCategory(){
+    $date = explode('-', $_POST['date']);
+    //$firstDayOfMonth = new DateTime('first day of this month');
+    $firstDayOfMonth = DateTime::createFromFormat('Y-m-d', "$date[0]-$date[1]-1");
+    //$lastDayOfMonth = new DateTime('last day of this month');
+    $lastDayOfMonth = DateTime::createFromFormat('Y-m-d', "$date[0]-$date[1]-31");
+    $firstDayOfMonth = $firstDayOfMonth->format('Y-m-d');
+    $lastDayOfMonth = $lastDayOfMonth->format('Y-m-d');
+    $userId = $_SESSION['loggedUser']['id'];
+    $categoryID = $_POST['category'];
+
+    if(!$isMainCategory = $this->checkIfMainCategory($categoryID)){
+      $mainCategory = $this->getMainCategoryForSubcategory($categoryID);
+    }
+    $categoryLimit = $this->getAmountOfCategoryLimit($categoryID);
+
+    if($isMainCategory){
+      $sql = "SELECT SUM(e.amount)
+              FROM expenses_category_assigned_to_users epcatu
+              INNER JOIN expenses e
+              ON e.expense_category_assigned_to_user_id = epcatu.id
+              WHERE e.user_id = $userId
+              AND epcatu.parent_category_id = $categoryID
+              AND e.date_of_expense BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'
+              GROUP BY epcatu.parent_category_id
+      ";
+    } elseif (is_null($categoryLimit)) {
+      $sql = "SELECT SUM(e.amount)
+              FROM expenses_category_assigned_to_users epcatu
+              INNER JOIN expenses e
+              ON e.expense_category_assigned_to_user_id = epcatu.id
+              WHERE e.user_id = $userId
+              AND epcatu.parent_category_id = $mainCategory
+              AND epcatu.limit_amount IS NULL
+              AND e.date_of_expense BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'
+              GROUP BY epcatu.parent_category_id
+      ";
+    } else {
+      $sql = "SELECT SUM(e.amount)
+              FROM expenses_category_assigned_to_users epcatu
+              INNER JOIN expenses e
+              ON e.expense_category_assigned_to_user_id = epcatu.id
+              WHERE e.user_id = $userId
+              AND e.expense_category_assigned_to_user_id = $categoryID
+              AND e.date_of_expense BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'
+              GROUP BY e.expense_category_assigned_to_user_id
+      ";
+    }
+    $sumExpensesForCategory = $this->db->getSingleValue($sql);
+    return $sumExpensesForCategory;
+  }
+
+  private function checkHowManySpentInSubcategoryWhitOutLimit(){
+    $date = explode('-', $_POST['date']);
+
+    //$firstDayOfMonth = new DateTime('first day of this month');
+    $firstDayOfMonth = DateTime::createFromFormat('Y-m-d', "$date[0]-$date[1]-1");
+    //$lastDayOfMonth = new DateTime('last day of this month');
+    $lastDayOfMonth = DateTime::createFromFormat('Y-m-d', "$date[0]-$date[1]-31");
+    $firstDayOfMonth = $firstDayOfMonth->format('Y-m-d');
+    $lastDayOfMonth = $lastDayOfMonth->format('Y-m-d');
+    $userId = $_SESSION['loggedUser']['id'];
+    $categoryID = $_POST['category'];
+
+    $mainCategory = $this->getMainCategoryForSubcategory($categoryID);
+
+    $sql = "SELECT SUM(e.amount)
+    FROM expenses_category_assigned_to_users epcatu
+    INNER JOIN expenses e
+    ON e.expense_category_assigned_to_user_id = epcatu.id
+    WHERE e.user_id = $userId
+    AND epcatu.parent_category_id = $mainCategory
+    AND epcatu.limit_amount IS NULL
+    AND e.date_of_expense BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'
+    GROUP BY epcatu.parent_category_id
+    ";
+    $sumExpensesForCategory = $this->db->getSingleValue($sql);
+    return $sumExpensesForCategory;
+  }
+
+  public function getAmountOfCategoryLimit($categoryID){
+    $isMainCategory = $this->checkIfMainCategory($categoryID);
+
+      $sql = "SELECT limit_amount
+              FROM expenses_category_assigned_to_users
+              WHERE id = $categoryID;
+              ";
+
+    $limitForCategory = $this->db->getSingleValue($sql);
+
+    return $limitForCategory;
+  }
+
+  private function getAmountOfSubcategoryLimitWhenIsNULL($categoryID){
+    if(is_null($limitForCategory) && !$isMainCategory){
+      $mainCategoryForSubcategory = $this->getMainCategoryForSubcategory($categoryID);
+      $sql = "SELECT limit_amount
+              FROM expenses_category_assigned_to_users
+              WHERE id = $mainCategoryForSubcategory;
+              ";
+      $limitForCategory = $this->db->getSingleValue($sql);
+    }
+  }
+
+  public function getCategoryLimitManager(){
+    $categoryID = $_POST['category'];
+    $limitForCategory = $this->getAmountOfCategoryLimit($categoryID);
+    $isMainCategory = $this->checkIfMainCategory($categoryID);
+
+    if(is_null($limitForCategory) && !$isMainCategory){
+      $mainCategoryForSubcategory = $this->getMainCategoryForSubcategory($categoryID);
+      $sql = "SELECT limit_amount
+              FROM expenses_category_assigned_to_users
+              WHERE id = $mainCategoryForSubcategory;
+              ";
+      $limitForCategory = $this->db->getSingleValue($sql);
+    }
+    return $limitForCategory;
+  }
+
+}//End of class

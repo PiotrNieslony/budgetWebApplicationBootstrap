@@ -1,5 +1,5 @@
 <?php
-class Validation {
+class UserValidation {
   private $validationCorrect = true;
   private $errors;
   private $db = null;
@@ -56,7 +56,7 @@ class Validation {
   }
 
   public function checkPassword($pass1, $pass2){
-    if((strlen($pass1)<8) || (strlen($pass1)>20)){
+    if((strlen($pass1)<7) || (strlen($pass1)>20)){
         $this->validationCorrect = false;
         $this->errors['e_pass'] = "Haslo musi posiadać od 8 do 20 znaków.";
     }

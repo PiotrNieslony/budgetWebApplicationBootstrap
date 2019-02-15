@@ -9,6 +9,26 @@
         <?= (isset($_SESSION['success'])) ? "<p class=\"alert alert-success\">".$_SESSION['success']."</p>" : "";
         unset($_SESSION['success']); ?>
         <div class="row">
+          <div class="col-md-12">
+            <strong>Informacja o limicie: </strong>
+            <span class="limit-message">Wpisz kwotę</span>
+          </div>
+        </div>
+        <div class="row limit-value" style="display: none;">
+          <div class="col-md-4">
+            <strong>Limit: </strong>
+            <span class="limit-amount">1300</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Wydano: </strong>
+            <span class="spent-amount">600</span>
+          </div>
+          <div class="col-md-4">
+            <strong>Różnica: </strong>
+            <span class="limit-subtraction">700</span>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-6">
             <div class="form-group">
               <strong>Kwota</strong>
@@ -66,3 +86,6 @@
     </div>
   </form>
 </div>
+<?php include "templates/addExpense-modal-window/limitAlertModal.php"; ?>
+
+<script src="js/expense-limit-check.js"></script>

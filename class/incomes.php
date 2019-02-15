@@ -45,7 +45,7 @@ class Incomes {
         $query = $this->db->prepare('INSERT INTO incomes VALUES (NULL, :user_id, :income_category_assigned_to_user_id, :amount, :date_of_income, :income_comment )');
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
         $query->bindValue(':income_category_assigned_to_user_id', $_POST['categorys'] , PDO::PARAM_INT);
-        $query->bindValue(':amount', $_POST['incomeAmount'],  PDO::PARAM_INT);
+        $query->bindValue(':amount', $_POST['incomeAmount'],  PDO::PARAM_STR);
         $query->bindValue(':date_of_income', $_POST['incomeDate'],  PDO::PARAM_STR);
         $query->bindValue(':income_comment', $_POST['incomeComment'],  PDO::PARAM_STR);
         $query->execute();
@@ -108,7 +108,7 @@ class Incomes {
                                     ');
         $query->bindValue(':user_id', $_SESSION['loggedUser']['id'], PDO::PARAM_INT);
         $query->bindValue(':income_category_assigned_to_user_id', $_POST['categorys'] , PDO::PARAM_INT);
-        $query->bindValue(':amount', $_POST['incomeAmount'],  PDO::PARAM_INT);
+        $query->bindValue(':amount', $_POST['incomeAmount'],  PDO::PARAM_STR);
         $query->bindValue(':date_of_income', $_POST['incomeDate'],  PDO::PARAM_STR);
         $query->bindValue(':income_comment', $_POST['incomeComment'],  PDO::PARAM_STR);
         $query->bindValue(':incomeID',  $_POST['incomeID'], PDO::PARAM_INT);
@@ -164,9 +164,21 @@ class Incomes {
     $counter = 1;
     $expenses = new Incomes($this->db);
     $sum = $expenses->sumOfIncomes($balaceDateFrom,$balaceDateTo);
+    $sum = number_format($sum, 2, ',', ' ');
+    echo "<caption>Tabela przychodów</caption>
+              <thead>
+                <tr>
+                  <th>l.p.</th>
+                  <th>Kategoria</th>
+                  <th>Wartość</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>";
     foreach ($incomesArray as $incomeRow) {
       echo "<tr id=\"$incomeRow[0]\"><td>$counter</td>";
       $counter++;
+      $incomeRow[2] = number_format($incomeRow[2], 2, ',', ' ');
       for ($i = 1; $i < 3; $i++) {
           echo "<td>";
           echo $incomeRow[$i];
@@ -180,7 +192,7 @@ class Incomes {
         echo "</td></tr>";
       }
     }
-    echo "<tr><td colspan=\"2\">Suma</td><th>$sum</th><td></td></tr>";
+    echo "</tbody><tfoot><tr><td colspan=\"2\">Suma</td><td>$sum</td><td></td></tr></tfoot>";
     $_SESSION['selected-date-from'] = $balaceDateFrom;
     $_SESSION['selected-date-to'] = $balaceDateTo;
     return $incomesArray;
@@ -212,11 +224,12 @@ class Incomes {
       if($expensRow[0] == $parentCategoryId) $expensRow[1] = "inne";
       $subTable .=  "<tr id=\"$expensRow[0]\"><td>$counter</td>";
       $counter++;
+      $sum += $expensRow[2];
+      $expensRow[2] = number_format($expensRow[2], 2, ',', ' ');
       for ($i = 1; $i < 3; $i++) {
           $subTable .=  "<td>";
           $subTable .=  $expensRow[$i];
           $subTable .=  "</td>";
-          $sum += $expensRow[2];
       }
       $subTable .= "<td><button class=\"btn btn-xs btn-info extend\"><span class=\"glyphicon glyphicon-chevron-down\" aria-hidden=\"true\"></span></button></td>";
       $subTable .=  "</tr>";
@@ -250,6 +263,7 @@ class Incomes {
     $counter = 0;
     foreach ($expenses as $expensRow) {
       $counter++;
+      $expensRow[2] = number_format($expensRow[2], 2, ',', ' ');
       $subTable .=  "<tr id=\"$expensRow[0]\"><td>$counter</td>";
       for ($i = 1; $i < 4; $i++) {
           if($i == 3) $subTable .=  "<td class=\"visible-sm visible-md visible-lg\">";
@@ -432,42 +446,55 @@ class Incomes {
       $parentCategoryID = $categoryID;
     $userID           = $_SESSION['loggedUser']['id'];
     $errors           = array();
-    if($subCategory){
-      try{
-        $query = $this->db->prepare(
-              "UPDATE incomes_category_assigned_to_users
-              SET
-              parent_category_id = :parentCategoryID,
-              name               = :categoryName
-              WHERE id  = :category_id AND user_id = :user_id");
-        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
-        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
-        $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
-        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
-        $query->execute();
-        $output = array('ok');
-        echo json_encode($output);
-      } catch(Exception $e){
-        $error['e_db'] = $e->getMessage();
-        echo json_encode($errors);
+
+    $validationCorrect = true;
+    $errors           = array();
+
+    //Category name validation
+    if((strlen($categoryName)<1) || ((strlen($categoryName)>25))) {
+      $validationCorrect = false;
+      $errors['e_categoryName'] = "Nazwa kategorii musi posiadać od 1 do 25 znaków.";
+    }
+    if($validationCorrect){
+      if($subCategory == "true"){
+        try{
+          $query = $this->db->prepare(
+                "UPDATE incomes_category_assigned_to_users
+                SET
+                parent_category_id = :parentCategoryID,
+                name               = :categoryName
+                WHERE id  = :category_id AND user_id = :user_id");
+          $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+          $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+          $query->bindValue(':parentCategoryID', $parentCategoryID, PDO::PARAM_INT);
+          $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+          $query->execute();
+          $output = array('ok');
+          echo json_encode($output);
+        } catch(Exception $e){
+          $error['e_db'] = $e->getMessage();
+          echo json_encode($errors);
+        }
+      } else {
+        try{
+          $query = $this->db->prepare(
+                "UPDATE incomes_category_assigned_to_users
+                SET
+                name               = :categoryName
+                WHERE id  = :category_id AND user_id = :user_id");
+          $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
+          $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+          $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
+          $query->execute();
+          $output = array('ok');
+          echo json_encode($output);
+        } catch(Exception $e){
+          $error['e_db'] = $e->getMessage();
+          echo json_encode($errors);
+        }
       }
     } else {
-      try{
-        $query = $this->db->prepare(
-              "UPDATE incomes_category_assigned_to_users
-              SET
-              name               = :categoryName
-              WHERE id  = :category_id AND user_id = :user_id");
-        $query->bindValue(':user_id', $userID, PDO::PARAM_INT);
-        $query->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
-        $query->bindValue(':categoryName', $categoryName,  PDO::PARAM_STR);
-        $query->execute();
-        $output = array('ok');
-        echo json_encode($output);
-      } catch(Exception $e){
-        $error['e_db'] = $e->getMessage();
-        echo json_encode($errors);
-      }
+      echo json_encode($errors);
     }
   }
 

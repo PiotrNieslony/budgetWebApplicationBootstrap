@@ -57,15 +57,23 @@ class Users {
   private function copyCategoryFromDefault($catType, $userID){
     $defaultTableName  = $catType."_category_default";
     $categoryTableName = $catType."_category_assigned_to_users";
+
     $query = $this->db->query("SELECT * FROM $defaultTableName");
     $query->execute();
     $defaultCategorys = $query->fetchAll();
     foreach($defaultCategorys as $category){
       $categoryName  = $category['name'];
-    $this->db->query("INSERT INTO $categoryTableName
-                       VALUES (NULL, $userID , NULL, '$categoryName')");
+
+      if($catType == "expenses") $sql = "INSERT INTO $categoryTableName
+                    VALUES (NULL, $userID , NULL, '$categoryName', NULL)";
+      else $sql = "INSERT INTO $categoryTableName
+                    VALUES (NULL, $userID , NULL, '$categoryName')";
+
+      $this->db->query($sql);
+
       $lastID = $this->db->getSingleValue("SELECT MAX(id) FROM $categoryTableName
                                           WHERE user_id = $userID");
+
       if($category['parent_category_id'] == $category['id']){
         $id = $lastID;
       } else {
@@ -96,7 +104,7 @@ class Users {
     $pass1 = $_POST['inputPassword1'];
     $pass2 = $_POST['inputPassword2'];
 
-    $validation = new Validation ($this->db);
+    $validation = new UserValidation ($this->db);
 
     $validation->checkUsername($login);
 
@@ -155,7 +163,7 @@ class Users {
     $userID = $this->getActualUserId();
     $email  = $_POST['inputEmail'];
 
-    $validation = new Validation ($this->db);
+    $validation = new UserValidation ($this->db);
 
     if($login != $this->getLoggedUsername()){
       $validation->checkUsername($login);
@@ -192,7 +200,7 @@ class Users {
     $pass2   = $_POST['pass2'];
     $userID  = $this->getActualUserId();
 
-    $validation = new Validation ($this->db);
+    $validation = new UserValidation ($this->db);
 
     $validation->passTheSameAsCurrent($oldPass, $userID);
     $validation->checkPassword($pass1,$pass2);
@@ -212,7 +220,7 @@ class Users {
 
   public function checkPassword($pass){
     $userID = $this->getActualUserId();
-    $validation = new Validation ($this->db);
+    $validation = new UserValidation ($this->db);
     $validation->passTheSameAsCurrent($pass, $userID);
     if($validation->getValidationCorrect()) return true;
     else return false;
