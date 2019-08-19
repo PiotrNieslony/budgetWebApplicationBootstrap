@@ -92,4 +92,4 @@
 </div>
 <?php include "templates/addExpense-modal-window/limitAlertModal.php"; ?>
 
-<script src="js/expense-limit-check.js"></script>
+<script src="js/expense-limit-check.js?v=<?=filemtime('js/expense-limit-check.js')?>"></script>

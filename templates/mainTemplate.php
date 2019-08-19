@@ -9,10 +9,10 @@
 	<meta name="description" content="Opis w Google" />
 	<meta name="keywords" content="" />
 	<?php include "templates/favicon.php" ?>
-	<link rel="stylesheet" href="bootstrap/bootstrap.css" type="text/css" />
+	<link rel="stylesheet" href="bootstrap/bootstrap.css?v=<?=filemtime('bootstrap/bootstrap.css')?>" type="text/css" />
 	<link rel="stylesheet" href="fontello/fontello.css" type="text/css" />
 	<link rel="stylesheet" href="jquery/jquery-ui.min.css" type="text/css" />
-	<link rel="stylesheet" href="css/style.css" type="text/css" />
+	<link rel="stylesheet" href="css/style.css?v=<?=filemtime('css/style.css')?>" type="text/css" />
 	<link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,400,700&amp;subset=latin-ext" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="jquery/jquery-3.3.1.min.js"></script>
@@ -54,6 +54,6 @@
 				</main>
 			</div>
 	</div>
-	<script src="js/main.js"></script>
+	<script src="js/main.js?v=<?=filemtime('js/main.js')?>"></script>
 </body>
 </html>

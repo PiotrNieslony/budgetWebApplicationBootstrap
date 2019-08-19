@@ -143,4 +143,4 @@
   include "templates/setting-modal-window/deleteAllUserItem.php";
   include "templates/setting-modal-window/deleteUserAccount.php";
  ?>
- <script src="js/settings-page.js"	></script>
+ <script src="js/settings-page.js?v=<?=filemtime('bootstrap/bootstrap.css')?>"	></script>

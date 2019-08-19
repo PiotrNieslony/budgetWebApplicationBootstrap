@@ -746,9 +746,11 @@ class Expenses {
               INNER JOIN expenses e
               ON e.expense_category_assigned_to_user_id = epcatu.id
               WHERE e.user_id = $userId
-              AND epcatu.parent_category_id = $mainCategory
-              AND epcatu.limit_amount IS NULL
               AND e.date_of_expense BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'
+              (AND epcatu.parent_category_id = $mainCategory
+              AND epcatu.limit_amount IS NULL)
+              OR
+              (AND epcatu.id = $mainCategory)
               GROUP BY epcatu.parent_category_id
       ";
     } else {

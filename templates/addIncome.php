@@ -2,7 +2,7 @@
 <header>
   <h1>Dodaj przychód</h1>
 </header>
-<div>
+<div class="add-income">
   <form role="form .form-horizontal" method="post">
     <div class="row">
       <div class="col-md-6">

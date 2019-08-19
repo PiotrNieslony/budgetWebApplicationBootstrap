@@ -20,7 +20,7 @@ switch($action):
     include 'templates/mainTemplate.php';
     break;
   case 'zaloguj';
-    if($budget->login()) header("Location:przegladaj-bilans");
+    if($budget->login()) header("Location:dodaj-wydatek");
     else include 'templates/entryTemplate.php';
     break;
   case 'rejestracja';

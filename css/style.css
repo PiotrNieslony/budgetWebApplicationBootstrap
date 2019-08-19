@@ -459,6 +459,8 @@ button.edit span, button.delete span, button.extend span {
     font-size: 15px; }
     .startpage .advantages li {
       padding: 0 5px; }
+    .startpage .advantages .img-crop {
+      height: initial; }
   .startpage .registert-now .btn {
     font-size: 20px; }
 
