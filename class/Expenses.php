@@ -205,17 +205,19 @@ class Expenses {
         $loggedUserId = $_SESSION['loggedUser']['id'];
         $queryExpens = $this->db->query(
                     "SELECT 
-                        exp.date_of_expense as date,
+                        exp.date_of_expense as expense_date,
                         exp.amount as amount,
                         cat.name as category,
-                        exp.payment_method_assigned_to_user_id as payment_method,
+                        pay_metd.name as payment_method,
                         exp.expense_comment as comment
                     FROM expenses exp
                     LEFT JOIN expenses_category_assigned_to_users cat
                     ON exp.expense_category_assigned_to_user_id = cat.id
+                    LEFT JOIN payment_methods_assigned_to_users pay_metd
+                    ON exp.payment_method_assigned_to_user_id = pay_metd.id
                     WHERE exp.user_id = $loggedUserId
-                    LIMIT 10
-                    ORDER BY date_of_expense DESC;
+                    ORDER BY date_of_expense DESC
+                    LIMIT 20;
                     "
         );
         return $queryExpens->fetchAll();

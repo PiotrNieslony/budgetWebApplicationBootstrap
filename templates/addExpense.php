@@ -99,8 +99,6 @@ if (!isset($budget)) {
                 $lastExpenses = $expenses->getLastExpense();
                 ?>
                 <table class="table table-striped">
-                    expense_category_assigned_to_user_id, :payment_method_assigned_to_user_id, :amount,
-                    :date_of_expense, :expense_comment
                     <tr>
                         <th>Data</th>
                         <th>Kwota</th>
@@ -111,9 +109,11 @@ if (!isset($budget)) {
                     <?php
                     foreach ($lastExpenses as $expens) {
                         echo '<tr>';
-                        foreach ($expens as $property) {
-                            echo '<td>' . $property . '</td>';
-                        }
+                            echo '<td>' . $expens['expense_date'] . '</td>';
+                            echo '<td>' . $expens['amount'] . '</td>';
+                            echo '<td>' . $expens['category'] . '</td>';
+                            echo '<td>' . $expens['payment_method'] . '</td>';
+                            echo '<td>' . $expens['comment'] . '</td>';
                         echo '</tr>';
                     }
                     ?>
