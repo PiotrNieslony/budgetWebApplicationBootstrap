@@ -200,6 +200,27 @@ class Expenses {
     return $expensesArray;
   }
 
+    public function getLastExpense()
+    {
+        $loggedUserId = $_SESSION['loggedUser']['id'];
+        $queryExpens = $this->db->query(
+                    "SELECT 
+                        exp.date_of_expense as date,
+                        exp.amount as amount,
+                        cat.name as category,
+                        exp.payment_method_assigned_to_user_id as payment_method,
+                        exp.expense_comment as comment
+                    FROM expenses exp
+                    LEFT JOIN expenses_category_assigned_to_users cat
+                    ON exp.expense_category_assigned_to_user_id = cat.id
+                    WHERE exp.user_id = $loggedUserId
+                    LIMIT 10
+                    ORDER BY date_of_expense DESC;
+                    "
+        );
+        return $queryExpens->fetchAll();
+    }
+
   private function validatePaymentMethodName($paymentMethodName){
     $validationResult = array(
       'validationCorrect' => true,

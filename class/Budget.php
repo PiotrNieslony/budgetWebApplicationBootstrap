@@ -368,4 +368,12 @@ class Budget {
     }
   }
 
+    /**
+     * @return Expenses
+     */
+    public function getExpenses()
+    {
+        return new Expenses($this->db);
+    }
+
 }
